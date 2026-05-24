@@ -480,6 +480,14 @@
     
     // 表示を更新
     updateHistoryList();
+    
+    fetch('★https://script.google.com/a/macros/hongo.ed.jp/s/AKfycbxAc5dcSA0y4X0J0Fag28mS4BenGNsokZl6VNj0-qvgb3-wD7J5trhRnnZZaz0z_Nc9/exec★', {
+    method: 'POST',
+    mode: 'no-cors', // クロスオリジン対策
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ time: time, id: id, type: type })
+  });
+}    
   }
   async function startScan() {
     if (scanning) return;
