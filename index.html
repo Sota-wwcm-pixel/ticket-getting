@@ -232,6 +232,31 @@
     color: rgba(248,244,238,0.5);
   }
 
+  /* Nickname input */
+  .nickname-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(12,192,223,0.08);
+    border: 2px solid rgba(12,192,223,0.3);
+    border-radius: 10px;
+    color: var(--white);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .nickname-input::placeholder {
+    color: rgba(248,244,238,0.3);
+  }
+
+  .nickname-input:focus {
+    background: rgba(12,192,223,0.12);
+    border-color: var(--bright-cyan);
+    box-shadow: 0 0 15px rgba(12,192,223,0.3);
+  }
+
   /* Submit button */
   .submit-btn {
     width: 100%;
@@ -277,8 +302,8 @@
     gap: 1.5rem;
     overflow-x: auto;
     margin-bottom: 1.5rem;
-    padding: 0 1.5rem 1rem 1.5rem; /* 左右にパディングを追加して見切れを表現 */
-    scroll-snap-type: x mandatory; /* スナップを有効にする */
+    padding: 0 1.5rem 1rem 1.5rem;
+    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
@@ -320,9 +345,9 @@
   }
 
   .ticket-slide {
-    flex: 0 0 calc(100% - 3rem); /* 左右に1.5remずつ見切れるように調整 */
+    flex: 0 0 calc(100% - 3rem);
     min-width: 0;
-    scroll-snap-align: center; /* 中央にスナップ */
+    scroll-snap-align: center;
   }
 
   .ticket {
@@ -349,7 +374,6 @@
     right: 0;
     height: 30px;
     background: var(--cream);
-    /* 3つの波を描画 */
     clip-path: path('M 0,15 Q 80,0 160,15 Q 240,30 320,15 Q 400,0 480,15 L 480,30 L 0,30 Z');
   }
 
@@ -680,7 +704,12 @@
   <div class="card" id="formCard">
     <div class="card-label">チケット発券</div>
 
-<div class="form-group">
+    <div class="form-group">
+      <label>ニックネーム（オプション）</label>
+      <input type="text" id="nicknameInput" class="nickname-input" placeholder="15字以内でニックネームを入力" maxlength="15">
+    </div>
+
+    <div class="form-group">
       <label>種別と枚数を選択してください</label>
       <div style="display:flex;flex-direction:column;gap:0.75rem;">
 
@@ -820,7 +849,7 @@
       if (saved) {
         tickets = JSON.parse(saved);
         if (tickets.length > 0) {
-          displayTickets();
+          // 自動的に表示しない - フォームを表示したまま
         }
       }
     } catch(e) { 
@@ -950,7 +979,7 @@
       };
       
       container.addEventListener('scroll', updateMask);
-      updateMask(); // 初期状態を設定
+      updateMask();
     }, 100);
   }
 
@@ -1005,7 +1034,7 @@
     document.getElementById('countMiddle').textContent = '0';
     document.getElementById('countChild').textContent = '0';
     document.getElementById('totalCount').textContent = '0';
-
+    document.getElementById('nicknameInput').value = '';
 
     saveTickets();
     displayTickets();
@@ -1016,7 +1045,7 @@
     tickets = tickets.filter(t => t.id !== ticketId);
     saveTickets();
     
-    displayTickets(); // 削除後に再描画
+    displayTickets();
   }
 
   function showTickets() {
@@ -1032,13 +1061,12 @@
     if (!ticket) return;
     
     const newNickname = prompt('ニックネームを入力してください（15字以内）:', ticket.nickname || '');
-    if (newNickname === null) return; // キャンセルされた場合
+    if (newNickname === null) return;
     
     const trimmed = newNickname.trim().substring(0, 15);
     ticket.nickname = trimmed;
     saveTickets();
     
-    // 表示を更新
     const nicknameElement = document.getElementById('nickname-' + ticketId);
     if (nicknameElement) {
       nicknameElement.textContent = trimmed || 'タップして編集';
@@ -1053,6 +1081,7 @@
     document.getElementById('countMiddle').textContent = '0';
     document.getElementById('countChild').textContent = '0';
     document.getElementById('totalCount').textContent = '0';
+    document.getElementById('nicknameInput').value = '';
 
     document.getElementById('formCard').style.display = 'block';
     document.getElementById('ticketWrap').classList.remove('visible');
