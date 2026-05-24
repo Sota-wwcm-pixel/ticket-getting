@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>読み取り機 — What we call Magic !</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- jsQRの読み込み（ここで正しく読み込まれています） -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+<link href="https://googleapis.com" rel="stylesheet">
+<script src="https://cloudflare.com"></script>
 <style>
   :root {
     --navy: #0a1628;
@@ -182,6 +181,28 @@
     100% { top: 100%; opacity: 0; }
   }
 
+  /* 【新規追加】カメラ起動ボタンのスタイル */
+  .start-btn {
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    border: none;
+    color: var(--navy);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.15em;
+    transition: all 0.2s;
+    display: block;
+    text-align: center;
+  }
+
+  .start-btn:hover {
+    opacity: 0.95;
+    box-shadow: 0 0 15px rgba(201,168,76,0.4);
+  }
+
   /* Result */
   .result-card {
     border-radius: 16px;
@@ -334,11 +355,12 @@
         <div class="scan-frame">
           <div class="scan-line"></div>
         </div>
-      </div> <!-- タグを修正しました -->
+      </div>
     </div>
+    <!-- 【新規追加】スキャナーカードの最下部にボタンを配置 -->
+    <button class="start-btn" id="startBtn">カメラを起動する</button>
   </div>
 
-  <!-- 履歴表示カード -->
   <div class="history-card">
     <div class="history-label">
       <span>スキャン履歴</span>
@@ -350,9 +372,9 @@
   </div>
 </div>
 
-<!-- QRスキャンのためのJavaScript処理を追加 -->
 <script>
   const video = document.getElementById('video');
+  const startBtn = document.getElementById('startBtn');
   const resultCard = document.getElementById('resultCard');
   const resultIcon = document.getElementById('resultIcon');
   const resultTitle = document.getElementById('resultTitle');
@@ -364,42 +386,19 @@
 
   let canvas = document.createElement('canvas');
   let ctx = canvas.getContext('2d');
-  let isScanning = true;
+  let isScanning = false;
   let historyData = [];
 
-  // カメラの起動
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then((stream) => {
-      video.srcObject = stream;
-      video.setAttribute('playsinline', true);
-      video.play();
-      requestAnimationFrame(tick);
-    })
-    .catch((err) => {
-      console.error("カメラの起動に失敗しました:", err);
-      showResult(false, "エラー", "カメラへのアクセスが拒否されました。設定を確認してください。");
-    });
-
-  // 毎フレームの描画・解析処理（tick関数）
-  function tick() {
-    if (video.readyState === video.HAVE_ENOUGH_DATA && isScanning) {
-      canvas.height = video.videoHeight;
-      canvas.width = video.videoWidth;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      
-      // ここでjsQRライブラリを使用
-      const code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'dontInvert',
-      });
-
-      if (code) {
-        // QRコード検出時の処理
-        isScanning = false;
-        handleQRCode(code.data);
-      }
-    }
-    requestAnimationFrame(tick);
-  }
-
+  // ボタンが押されたらカメラを起動する処理
+  startBtn.addEventListener('click', () => {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then((stream) => {
+        video.srcObject = stream;
+        video.setAttribute('playsinline', true);
+        video.play();
+        isScanning = true;
+        startBtn.style.display = 'none'; // 起動したらボタンを隠す
+        requestAnimationFrame(tick);
+      })
+      .catch((err) => {
+        console.error("カメラの起動に失敗しました:", err);
