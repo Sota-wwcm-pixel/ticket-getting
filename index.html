@@ -978,62 +978,71 @@
     }, 100);
   }
 
-  function issueTicket() {
-    const total = counts.adult + counts.middle + counts.child;
-    if (total === 0) {
-      alert('1枚以上選択してください。');
-      return;
-    }
+function issueTicket() {
+  const total = counts.adult + counts.middle + counts.child;
 
-    const now = new Date();
-    const dateStr = now.toLocaleString('ja-JP', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    const nickname = document.getElementById('nicknameInput').TextContent();
-    
-    // 新しいチケットを追加
-    for (let t = 0; t < counts.adult; t++) {
-      tickets.push({
-        type: 'adult',
-        id: generateId(),
-        issued: now.getTime(),
-        issuedAt: dateStr,
-        admitted: false,
-        nickname: nickname
-      });
-    }
-    for (let t = 0; t < counts.middle; t++) {
-      tickets.push({
-        type: 'middle',
-        id: generateId(),
-        issued: now.getTime(),
-        issuedAt: dateStr,
-        admitted: false,
-        nickname: nickname
-      });
-    }
-    for (let t = 0; t < counts.child; t++) {
-      tickets.push({
-        type: 'child',
-        id: generateId(),
-        issued: now.getTime(),
-        issuedAt: dateStr,
-        admitted: false,
-        nickname: nickname
-      });
-    }
-
-    // カウントをリセット
-    counts.adult = 0;
-    counts.middle = 0;
-    counts.child = 0;
-    document.getElementById('countAdult').textContent = '0';
-    document.getElementById('countMiddle').textContent = '0';
-    document.getElementById('countChild').textContent = '0';
-    document.getElementById('totalCount').textContent = '0';
-    document.getElementById('nicknameInput').textContnt = '0';
-
-    saveTickets();
-    displayTickets();
+  if (total === 0) {
+    alert('1枚以上選択してください。');
+    return;
   }
+
+  const now = new Date();
+
+  const dateStr = now.toLocaleString('ja-JP', {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const nickname = '';
+
+  for (let t = 0; t < counts.adult; t++) {
+    tickets.push({
+      type: 'adult',
+      id: generateId(),
+      issued: now.getTime(),
+      issuedAt: dateStr,
+      admitted: false,
+      nickname
+    });
+  }
+
+  for (let t = 0; t < counts.middle; t++) {
+    tickets.push({
+      type: 'middle',
+      id: generateId(),
+      issued: now.getTime(),
+      issuedAt: dateStr,
+      admitted: false,
+      nickname
+    });
+  }
+
+  for (let t = 0; t < counts.child; t++) {
+    tickets.push({
+      type: 'child',
+      id: generateId(),
+      issued: now.getTime(),
+      issuedAt: dateStr,
+      admitted: false,
+      nickname
+    });
+  }
+
+  counts.adult = 0;
+  counts.middle = 0;
+  counts.child = 0;
+
+  document.getElementById('countAdult').textContent = '0';
+  document.getElementById('countMiddle').textContent = '0';
+  document.getElementById('countChild').textContent = '0';
+  document.getElementById('totalCount').textContent = '0';
+
+  saveTickets();
+  displayTickets();
+}
 
   function deleteTicket(ticketId) {
     if (!confirm('このチケットを削除しますか？')) return;
@@ -1051,19 +1060,30 @@
     displayTickets();
   }
 
-  function editNickname(ticketId) {
-    const ticket = tickets.find(t => t.id === ticketId);
-    if (!ticket) return;
-    
-    const trimmed = newNickname.trim().substring(0, 15);
-    ticket.nickname = trimmed;
-    saveTickets();
-    
-    const nicknameElement = document.getElementById('nickname-' + ticketId);
-    if (nicknameElement) {
-      nicknameElement.textContent = trimmed || 'タップして編集';
-    }
+function editNickname(ticketId) {
+  const ticket = tickets.find(t => t.id === ticketId);
+  if (!ticket) return;
+
+  const newNickname = prompt(
+    'ニックネームを入力',
+    ticket.nickname || ''
+  );
+
+  if (newNickname === null) return;
+
+  const trimmed = newNickname.trim().substring(0, 15);
+
+  ticket.nickname = trimmed;
+  saveTickets();
+
+  const nicknameElement =
+    document.getElementById('nickname-' + ticketId);
+
+  if (nicknameElement) {
+    nicknameElement.textContent =
+      trimmed || 'タップして編集';
   }
+}
 
   function goBack() {
     counts.adult = 0;
