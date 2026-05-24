@@ -1,121 +1,362 @@
 <script>
-  let scanning = false;
-  let stream = null;
-  const scannedIds = new Set();
-  const history = [];
+let scanning = false;
+let stream = null;
+const scannedIds = new Set();
+const history = [];
 
-  async function startScan() {
-    if (scanning) return;
+/* ------------------------------
+   Sound
+------------------------------ */
+function playSound(type) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
+  if (type === 'success') {
+    [523, 784].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+
+      gain.gain.setValueAtTime(
+        0.3,
+        ctx.currentTime + i * 0.15
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        ctx.currentTime + i * 0.15 + 0.3
+      );
+
+      osc.start(ctx.currentTime + i * 0.15);
+      osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+    });
+
+  } else {
+    [200, 150].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.frequency.value = freq;
+      osc.type = 'sawtooth';
+
+      gain.gain.setValueAtTime(
+        0.2,
+        ctx.currentTime + i * 0.2
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        ctx.currentTime + i * 0.2 + 0.3
+      );
+
+      osc.start(ctx.currentTime + i * 0.2);
+      osc.stop(ctx.currentTime + i * 0.2 + 0.3);
+    });
+  }
+}
+
+/* ------------------------------
+   Result UI
+------------------------------ */
+function showResult(type, data) {
+  const card = document.getElementById('resultCard');
+  const icon = document.getElementById('resultIcon');
+  const title = document.getElementById('resultTitle');
+  const detail = document.getElementById('resultDetail');
+  const info = document.getElementById('resultInfo');
+
+  card.className = 'result-card visible ' + type;
+
+  if (type === 'success') {
+    icon.textContent = '✅';
+    title.textContent = '入場を確認しました';
+
+    detail.textContent =
+      'ようこそ、不思議な国へ！\nWhat we call Magic ! をお楽しみください。';
+
+    if (data) {
+      info.style.display = 'block';
+
+      info.innerHTML = `
+        チケットID: ${data.id}<br>
+        種別: ${data.type === 'adult' ? '大人' : '子供'}<br>
+        枚数: ${data.count}枚
+      `;
+    }
+
+    playSound('success');
+
+  } else if (type === 'duplicate') {
+    icon.textContent = '⚠️';
+    title.textContent = 'すでに使用済み';
+
+    detail.textContent =
+      'このチケットは既に入場処理されています。';
+
+    info.style.display = 'none';
+
+    playSound('error');
+
+  } else {
+    icon.textContent = '❌';
+    title.textContent = '読み取り失敗';
+
+    detail.textContent =
+      'QRコードを認識できませんでした。';
+
+    info.style.display = 'none';
+
+    playSound('error');
+  }
+
+  setTimeout(() => {
+    card.classList.remove('visible');
+  }, 4000);
+}
+
+/* ------------------------------
+   History
+------------------------------ */
+function addHistory(type, id) {
+  const now = new Date();
+
+  const time =
+    now.getHours().toString().padStart(2, '0') +
+    ':' +
+    now.getMinutes().toString().padStart(2, '0') +
+    ':' +
+    now.getSeconds().toString().padStart(2, '0');
+
+  history.unshift({
+    type,
+    id,
+    time
+  });
+
+  const list =
+    document.getElementById('historyList');
+
+  list.innerHTML = history
+    .slice(0, 20)
+    .map(
+      h => `
+      <div class="history-item">
+        <div class="history-dot ${h.type}"></div>
+        <div class="history-id">
+          ${h.id || '不明なQR'}
+        </div>
+        <div class="history-time">
+          ${h.time}
+        </div>
+      </div>
+    `
+    )
+    .join('');
+
+  document.getElementById(
+    'historyCount'
+  ).textContent =
+    history.length + '件';
+}
+
+/* ------------------------------
+   Start Camera
+------------------------------ */
+async function startScan() {
+  if (scanning) return;
+
+  try {
+    const video =
+      document.getElementById('video');
+
+    stream =
+      await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: { ideal: 'environment' },
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          facingMode: {
+            ideal: 'environment'
+          },
+          width: {
+            ideal: 1280
+          },
+          height: {
+            ideal: 720
+          }
         }
       });
 
-      const video = document.getElementById('video');
-      video.srcObject = stream;
+    video.srcObject = stream;
 
-      // ←これ重要
-      await video.play();
+    await video.play();
 
-      document.getElementById('startBtn').textContent =
-        '📷 スキャン中...';
-      document.getElementById('startBtn').disabled = true;
+    document.getElementById(
+      'startBtn'
+    ).textContent =
+      '📷 スキャン中...';
 
-      scanning = true;
+    document.getElementById(
+      'startBtn'
+    ).disabled = true;
 
-      requestAnimationFrame(tick);
+    scanning = true;
 
-    } catch (e) {
-      console.error(e);
-      alert('カメラへのアクセスが拒否されました。ブラウザ設定を確認してください。');
-    }
+    requestAnimationFrame(tick);
+
+  } catch (e) {
+    console.error(e);
+
+    alert(
+      'カメラを起動できませんでした。\nブラウザ権限を確認してください。'
+    );
+  }
+}
+
+/* ------------------------------
+   QR Scan Loop
+------------------------------ */
+function tick() {
+  if (!scanning) return;
+
+  const video =
+    document.getElementById('video');
+
+  if (
+    video.readyState !==
+    video.HAVE_ENOUGH_DATA
+  ) {
+    requestAnimationFrame(tick);
+    return;
   }
 
-  function tick() {
-    if (!scanning) return;
+  const canvas =
+    document.createElement('canvas');
 
-    const video = document.getElementById('video');
+  const ctx =
+    canvas.getContext('2d');
 
-    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
-      requestAnimationFrame(tick);
-      return;
-    }
+  canvas.width =
+    video.videoWidth;
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+  canvas.height =
+    video.videoHeight;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0);
 
-    ctx.drawImage(video, 0, 0);
-
-    const imageData = ctx.getImageData(
+  const imageData =
+    ctx.getImageData(
       0,
       0,
       canvas.width,
       canvas.height
     );
 
-    // ←認識感度UP
-    const code = jsQR(
-      imageData.data,
-      imageData.width,
-      imageData.height,
-      {
-        inversionAttempts: 'attemptBoth'
-      }
+  const code = jsQR(
+    imageData.data,
+    imageData.width,
+    imageData.height,
+    {
+      inversionAttempts:
+        'attemptBoth'
+    }
+  );
+
+  if (code) {
+    console.log(
+      'QR検出:',
+      code.data
     );
 
-    if (code) {
-      console.log('QR検出:', code.data);
+    try {
+      const data =
+        JSON.parse(code.data);
 
-      try {
-        const data = JSON.parse(code.data);
+      console.log(
+        'JSON解析成功:',
+        data
+      );
 
-        if (data.id) {
-
-          if (scannedIds.has(data.id)) {
-            showResult('duplicate', data);
-            addHistory('error', data.id);
-
-          } else {
-            scannedIds.add(data.id);
-            showResult('success', data);
-            addHistory('success', data.id);
-          }
-
-          scanning = false;
-
-          setTimeout(() => {
-            scanning = true;
-            requestAnimationFrame(tick);
-          }, 3000);
-
-          return;
-        }
-
-      } catch (e) {
-        console.error('JSON parse error', e);
-
-        showResult('error');
-        addHistory('error', '不明');
-
-        scanning = false;
-
-        setTimeout(() => {
-          scanning = true;
-          requestAnimationFrame(tick);
-        }, 2000);
-
-        return;
+      if (!data.id) {
+        throw new Error(
+          'id missing'
+        );
       }
-    }
 
-    requestAnimationFrame(tick);
+      if (
+        scannedIds.has(data.id)
+      ) {
+        showResult(
+          'duplicate',
+          data
+        );
+
+        addHistory(
+          'error',
+          data.id
+        );
+
+      } else {
+        scannedIds.add(
+          data.id
+        );
+
+        showResult(
+          'success',
+          data
+        );
+
+        addHistory(
+          'success',
+          data.id
+        );
+      }
+
+      scanning = false;
+
+      setTimeout(() => {
+        scanning = true;
+        requestAnimationFrame(
+          tick
+        );
+      }, 3000);
+
+      return;
+
+    } catch (e) {
+      console.error(
+        'JSON parse error',
+        e
+      );
+
+      showResult(
+        'error'
+      );
+
+      addHistory(
+        'error',
+        '不明'
+      );
+
+      scanning = false;
+
+      setTimeout(() => {
+        scanning = true;
+        requestAnimationFrame(
+          tick
+        );
+      }, 2000);
+
+      return;
+    }
   }
+
+  requestAnimationFrame(
+    tick
+  );
+}
 </script>
