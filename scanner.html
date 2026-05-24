@@ -471,26 +471,26 @@
   function addHistory(type, id) {
     const now = new Date();
     const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
-    
-    // 履歴に追加
+    // 履歴保存処理...
     history.unshift({ type, id, time });
-    
-    // localStorageに保存
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-    
-    // 表示を更新
     updateHistoryList();
     
-    fetch('★https://script.google.com/a/macros/hongo.ed.jp/s/AKfycbxAc5dcSA0y4X0J0Fag28mS4BenGNsokZl6VNj0-qvgb3-wD7J5trhRnnZZaz0z_Nc9/exec★', {
-      method: 'POST',
-      mode: 'no-cors', // クロスオリジン対策
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ time: time, id: id, type: type })
-    }).then(() => {
-      console.log("スプレッドシートに保存しました");
-    }).catch((error) => {
-      console.error("送信に失敗しました:", error);
+    // --- スプレッドシートへ送信 ---
+    const url = '★https://script.google.com/a/macros/hongo.ed.jp/s/AKfycbxAc5dcSA0y4X0J0Fag28mS4BenGNsokZl6VNj0-qvgb3-wD7J5trhRnnZZaz0z_Nc9/exec★';
+    
+    // パラメータをURL形式で作成
+    const params = new URLSearchParams({
+      time: time,
+      id: id,
+      type: type
     });
+
+    // fetchで送信
+    fetch(`${url}?${params.toString()}`, {
+      method: 'POST',
+      mode: 'no-cors'
+    }).catch(err => console.error("送信エラー:", err));
   }
   async function startScan() {
     if (scanning) return;
