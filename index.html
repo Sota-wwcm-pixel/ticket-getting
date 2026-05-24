@@ -700,7 +700,6 @@
     <div class="subtitle">本郷祭 2026 — 入場チケット</div>
   </div>
 
-  <!-- Form -->
   <div class="card" id="formCard">
     <div class="card-label">チケット発券</div>
 
@@ -708,7 +707,6 @@
       <label>種別と枚数を選択してください</label>
       <div style="display:flex;flex-direction:column;gap:0.75rem;">
 
-        <!-- 大人 -->
         <div style="background:rgba(12,192,223,0.08);border:2px solid rgba(12,192,223,0.3);border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
           <div style="display:flex;align-items:center;gap:0.75rem;">
             <span style="font-size:1.4rem;">🎩</span>
@@ -724,7 +722,6 @@
           </div>
         </div>
 
-        <!-- 中人 -->
         <div style="background:rgba(12,192,223,0.08);border:2px solid rgba(12,192,223,0.3);border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
           <div style="display:flex;align-items:center;gap:0.75rem;">
             <span style="font-size:1.4rem;">🎒</span>
@@ -740,7 +737,6 @@
           </div>
         </div>
 
-        <!-- 小人 -->
         <div style="background:rgba(12,192,223,0.08);border:2px solid rgba(12,192,223,0.3);border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
           <div style="display:flex;align-items:center;gap:0.75rem;">
             <span style="font-size:1.4rem;">⚽️</span>
@@ -766,7 +762,6 @@
     <button class="submit-btn" style="background:linear-gradient(135deg,rgba(23,253,72,0.4) 0%,rgba(23,253,72,0.3) 50%,rgba(23,253,72,0.4) 100%);color:rgba(23,253,72,0.9);border:2px solid rgba(23,253,72,0.6);margin-top:0.75rem;" onclick="showTickets()">📋 発券済みのチケットを表示</button>
   </div>
 
-  <!-- Tickets Display -->
   <div class="ticket-wrap" id="ticketWrap">
     <div class="tickets-container" id="ticketsContainer"></div>
 
@@ -777,7 +772,6 @@
     スタッフの方は <a href="#" onclick="checkPassword(event)">読み取り機ページ</a> へ
   </div>
 
-  <!-- Password modal -->
   <div id="pwModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
     <div style="background:linear-gradient(135deg,rgba(0,74,173,0.98) 0%,rgba(12,192,223,0.95) 100%);border:1px solid rgba(12,192,223,0.4);border-radius:16px;padding:2rem;width:90%;max-width:320px;box-shadow:0 30px 80px rgba(0,0,0,0.6);">
       <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--bright-cyan);text-align:center;margin-bottom:0.25rem;">Staff Access</div>
@@ -792,7 +786,6 @@
   </div>
 </div>
 
-<!-- Footer -->
 <div class="footer">
   <div class="footer-logo">
     <img src="14.svg" alt="WWCM">
@@ -1093,7 +1086,8 @@ function editNickname(ticketId) {
     document.getElementById('countMiddle').textContent = '0';
     document.getElementById('countChild').textContent = '0';
     document.getElementById('totalCount').textContent = '0';
-    document.getElementById('nicknameInput').value = '';
+
+    // 存在しない要素「nicknameInput」へのアクセスを削除してエラーを解消
 
     document.getElementById('formCard').style.display = 'block';
     document.getElementById('ticketWrap').classList.remove('visible');
