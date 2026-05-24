@@ -477,20 +477,20 @@
     updateHistoryList();
     
     // --- スプレッドシートへ送信 ---
-    const url = '★https://script.google.com/a/macros/hongo.ed.jp/s/AKfycbzjw1id_tNgrUGCgakGccAsAvAw2iW1Ac6XScRRTt2vTDNd4fVEYBNV6xT1D6c6csS1/exec★';
+    const url = '★https://docs.google.com/spreadsheets/d/1FuMq2xJXmqprLxelwAlgo2f-RS5iJiFDYMU81-S0KwU/edit?hl=ja&gid=0#gid=0★';
     
-    // パラメータをURL形式で作成
-    const params = new URLSearchParams({
-      time: time,
-      id: id,
-      type: type
-    });
+   // URLの先頭に余計なものがつかないよう、変数にして確認しやすくします
+const gasUrl = 'https://script.google.com/a/macros/hongo.ed.jp/s/AKfycbzhf9gfilZD8inM--MJ7-spt_PfCnH3FCBlrw-XMujdYZe6jAkTEzqJQyV_kpXKk2x9/exec';
+const params = new URLSearchParams({
+  time: time,
+  id: id,
+  type: type
+});
 
-    // fetchで送信
-    fetch(`${url}?${params.toString()}`, {
-      method: 'POST',
-      mode: 'no-cors'
-    }).catch(err => console.error("送信エラー:", err));
+fetch(`${gasUrl}?${params.toString()}`, {
+  method: 'GET', // 405対策としてGETに変更
+  mode: 'no-cors'
+});.catch(err => console.error("送信エラー:", err));
   }
   async function startScan() {
     if (scanning) return;
