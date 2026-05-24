@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>入場チケット — What we call Magic !</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --navy: #0a1628;
+    --deep-blue: #0d2247;
+    --blue: #1a3a6e;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cyan: #00b4d8;
+    --white: #f8f4ee;
+    --cream: #f0e9d6;
+    --text: #1a1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 70% 40%, rgba(201,168,76,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 50%, rgba(255,255,255,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-top: 1rem;
+  }
+
+  .sparkle {
+    color: var(--cyan);
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+    display: block;
+    margin-bottom: 0.5rem;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    color: rgba(248,244,238,0.5);
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+  }
+
+  /* Form card */
+  .card {
+    background: linear-gradient(135deg, rgba(13,34,71,0.9) 0%, rgba(26,58,110,0.6) 100%);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.2);
+  }
+
+  .card-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(201,168,76,0.4), transparent);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(248,244,238,0.7);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Ticket type selector */
+  .type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .type-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 10px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    color: var(--white);
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .type-btn:hover {
+    background: rgba(201,168,76,0.1);
+    border-color: rgba(201,168,76,0.5);
+  }
+
+  .type-btn.selected {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+  }
+
+  .type-btn .type-icon { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+  .type-btn .type-name { font-size: 0.9rem; font-weight: 500; }
+  .type-btn .type-note { font-size: 0.7rem; color: rgba(248,244,238,0.5); margin-top: 0.2rem; }
+
+  /* Count selector */
+  .count-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+  }
+
+  .count-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.1);
+    color: var(--gold-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .count-btn:hover { background: rgba(201,168,76,0.2); }
+
+  .count-display {
+    flex: 1;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 1.5rem;
+    color: var(--white);
+  }
+
+  .count-label {
+    font-size: 0.75rem;
+    color: rgba(248,244,238,0.5);
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+    background-size: 200% 100%;
+    border: none;
+    border-radius: 10px;
+    color: var(--navy);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+  }
+
+  .submit-btn:hover {
+    background-position: 100% 0;
+    box-shadow: 0 8px 30px rgba(201,168,76,0.4);
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  /* Ticket display */
+  .ticket-wrap {
+    display: none;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .ticket-wrap.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ticket {
+    background: var(--cream);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    position: relative;
+  }
+
+  .ticket-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--deep-blue) 100%);
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .ticket-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 20px;
+    background: var(--cream);
+    clip-path: polygon(0 100%, 100% 100%, 100% 0, 95% 60%, 90% 0, 85% 60%, 80% 0, 75% 60%, 70% 0, 65% 60%, 60% 0, 55% 60%, 50% 0, 45% 60%, 40% 0, 35% 60%, 30% 0, 25% 60%, 20% 0, 15% 60%, 10% 0, 5% 60%, 0 0);
+  }
+
+  .ticket-event {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .ticket-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+
+  .ticket-subtitle {
+    font-size: 0.65rem;
+    color: rgba(248,244,238,0.5);
+    margin-top: 0.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .ticket-body {
+    padding: 2rem 1.5rem 1.5rem;
+    color: var(--text);
+  }
+
+  .ticket-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .ticket-info-label {
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.5);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ticket-info-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .ticket-divider {
+    height: 1px;
+    background: repeating-linear-gradient(to right, rgba(26,26,46,0.15) 0, rgba(26,26,46,0.15) 5px, transparent 5px, transparent 10px);
+    margin: 1rem 0;
+  }
+
+  .ticket-type-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-adult {
+    background: rgba(10,22,40,0.1);
+    color: var(--navy);
+    border: 1px solid rgba(10,22,40,0.2);
+  }
+
+  .badge-child {
+    background: rgba(0,180,216,0.1);
+    color: #006d8f;
+    border: 1px solid rgba(0,180,216,0.3);
+  }
+
+  .qr-section {
+    text-align: center;
+    padding: 1rem 0 0.5rem;
+  }
+
+  #qrcode {
+    display: inline-block;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  .qr-note {
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.5);
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Admitted state */
+  .admitted-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(240,233,214,0.92);
+    border-radius: 16px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    animation: fadeIn 0.5s ease;
+    z-index: 10;
+  }
+
+  .admitted-overlay.visible { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .admitted-stamp {
+    width: 120px;
+    height: 120px;
+    border: 4px solid #c0392b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transform: rotate(-15deg);
+    animation: stampIn 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+
+  @keyframes stampIn {
+    0% { transform: rotate(-15deg) scale(3); opacity: 0; }
+    60% { transform: rotate(-15deg) scale(0.9); }
+    100% { transform: rotate(-15deg) scale(1); opacity: 1; }
+  }
+
+  .admitted-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #c0392b;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .admitted-sub {
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.5);
+    letter-spacing: 0.1em;
+  }
+
+  /* Ticket footer */
+  .ticket-footer {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--deep-blue) 100%);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ticket-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(248,244,238,0.4);
+    letter-spacing: 0.1em;
+  }
+
+  .ticket-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ticket-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.3);
+  }
+
+  .ticket-dot:nth-child(2) { background: rgba(201,168,76,0.6); }
+  .ticket-dot:nth-child(3) { background: var(--gold); }
+
+  /* Simulate admit button */
+  .simulate-btn {
+    width: 100%;
+    padding: 0.875rem;
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    color: rgba(248,244,238,0.6);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+
+  .simulate-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .back-btn {
+    width: 100%;
+    padding: 0.875rem;
+    background: transparent;
+    border: 1px solid rgba(248,244,238,0.15);
+    border-radius: 10px;
+    color: rgba(248,244,238,0.4);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    margin-top: 0.75rem;
+  }
+
+  .back-btn:hover {
+    border-color: rgba(248,244,238,0.3);
+    color: rgba(248,244,238,0.7);
+  }
+
+  /* Scanner page link */
+  .scanner-link {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.7rem;
+    color: rgba(248,244,238,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .scanner-link a {
+    color: rgba(201,168,76,0.6);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    padding-bottom: 1px;
+  }
+
+  .scanner-link a:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <span class="sparkle">✦ ✦ ✦</span>
+    <div class="title">What we call Magic !</div>
+    <div class="subtitle">本郷祭 2025 — 入場チケット</div>
+  </div>
+
+  <!-- Form -->
+  <div class="card" id="formCard">
+    <div class="card-label">チケット発券</div>
+
+    <div class="form-group">
+      <label>種別を選択してください</label>
+      <div class="type-selector">
+        <button class="type-btn selected" id="btnAdult" onclick="selectType('adult')">
+          <span class="type-icon">🎩</span>
+          <span class="type-name">大人</span>
+          <span class="type-note">中学生以上</span>
+        </button>
+        <button class="type-btn" id="btnChild" onclick="selectType('child')">
+          <span class="type-icon">🎀</span>
+          <span class="type-name">子供</span>
+          <span class="type-note">小学生以下</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>枚数</label>
+      <div class="count-selector">
+        <button class="count-btn" onclick="changeCount(-1)">−</button>
+        <div>
+          <div class="count-display" id="countDisplay">1</div>
+          <div class="count-label" style="text-align:center">枚</div>
+        </div>
+        <button class="count-btn" onclick="changeCount(1)">＋</button>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="issueTicket()">✦ チケットを発券する</button>
+  </div>
+
+  <!-- Ticket -->
+  <div class="ticket-wrap" id="ticketWrap">
+    <div class="ticket" id="ticket">
+      <div class="admitted-overlay" id="admittedOverlay">
+        <div class="admitted-stamp">
+          <div class="admitted-text">入場<br>済み</div>
+        </div>
+        <div class="admitted-sub">ADMITTED</div>
+      </div>
+
+      <div class="ticket-header">
+        <div class="ticket-event">Hongosai 2025</div>
+        <div class="ticket-title">What we call Magic !</div>
+        <div class="ticket-subtitle">〜ディズニーヲタクが贈る、不思議な国の楽しみかた〜</div>
+      </div>
+
+      <div class="ticket-body">
+        <div class="ticket-info-row">
+          <span class="ticket-info-label">種別</span>
+          <span class="ticket-type-badge" id="typeBadge">大人</span>
+        </div>
+        <div class="ticket-info-row" style="margin-top:0.5rem">
+          <span class="ticket-info-label">枚数</span>
+          <span class="ticket-info-value" id="countValue">1枚</span>
+        </div>
+        <div class="ticket-info-row" style="margin-top:0.5rem">
+          <span class="ticket-info-label">発券日時</span>
+          <span class="ticket-info-value" id="issuedAt">—</span>
+        </div>
+
+        <div class="ticket-divider"></div>
+
+        <div class="qr-section">
+          <div id="qrcode"></div>
+          <div class="qr-note">入場口でこのQRコードをご提示ください</div>
+        </div>
+      </div>
+
+      <div class="ticket-footer">
+        <span class="ticket-id" id="ticketId">—</span>
+        <div class="ticket-dots">
+          <div class="ticket-dot"></div>
+          <div class="ticket-dot"></div>
+          <div class="ticket-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="simulate-btn" onclick="simulateAdmit()">▶ 入場済みにする（スタッフ用デモ）</button>
+    <button class="back-btn" onclick="goBack()">← 新しいチケットを発券する</button>
+  </div>
+
+  <div class="scanner-link">
+    スタッフの方は <a href="scanner.html">読み取り機ページ</a> へ
+  </div>
+</div>
+
+<script>
+  let selectedType = 'adult';
+  let count = 1;
+
+  function selectType(type) {
+    selectedType = type;
+    document.getElementById('btnAdult').classList.toggle('selected', type === 'adult');
+    document.getElementById('btnChild').classList.toggle('selected', type === 'child');
+  }
+
+  function changeCount(delta) {
+    count = Math.max(1, Math.min(10, count + delta));
+    document.getElementById('countDisplay').textContent = count;
+  }
+
+  function generateId() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let id = 'WWCM-';
+    for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    return id;
+  }
+
+  function issueTicket() {
+    const id = generateId();
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const dateStr = (now.getMonth()+1) + '/' + now.getDate();
+
+    // Update ticket info
+    const badge = document.getElementById('typeBadge');
+    badge.textContent = selectedType === 'adult' ? '大人' : '子供';
+    badge.className = 'ticket-type-badge ' + (selectedType === 'adult' ? 'badge-adult' : 'badge-child');
+    document.getElementById('countValue').textContent = count + '枚';
+    document.getElementById('issuedAt').textContent = dateStr + ' ' + timeStr;
+    document.getElementById('ticketId').textContent = id;
+
+    // Generate QR
+    document.getElementById('qrcode').innerHTML = '';
+    new QRCode(document.getElementById('qrcode'), {
+      text: JSON.stringify({ id, type: selectedType, count, issued: now.toISOString() }),
+      width: 160,
+      height: 160,
+      colorDark: '#0a1628',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    // Reset admitted state
+    document.getElementById('admittedOverlay').classList.remove('visible');
+
+    // Show ticket
+    document.getElementById('formCard').style.display = 'none';
+    const wrap = document.getElementById('ticketWrap');
+    wrap.classList.add('visible');
+    wrap.style.display = 'block';
+  }
+
+  function simulateAdmit() {
+    document.getElementById('admittedOverlay').classList.add('visible');
+  }
+
+  function goBack() {
+    document.getElementById('formCard').style.display = 'block';
+    document.getElementById('ticketWrap').classList.remove('visible');
+    document.getElementById('ticketWrap').style.display = 'none';
+  }
+</script>
+</body>
+</html>
