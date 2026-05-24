@@ -1,519 +1,117 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>読み取り機 — What we call Magic !</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
-<style>
-  :root {
-    --navy: #0a1628;
-    --deep-blue: #0d2247;
-    --blue: #1a3a6e;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --cyan: #00b4d8;
-    --white: #f8f4ee;
-    --green: #27ae60;
-    --red: #c0392b;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Noto Serif JP', serif;
-    background: var(--navy);
-    color: var(--white);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 2rem 1.5rem 4rem;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 60% 70%, rgba(201,168,76,0.3) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 480px;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .staff-badge {
-    display: inline-block;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--cyan);
-    border: 1px solid rgba(0,180,216,0.3);
-    border-radius: 99px;
-    padding: 0.25rem 0.75rem;
-    margin-bottom: 0.75rem;
-    text-transform: uppercase;
-  }
-
-  .title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    color: var(--gold-light);
-    margin-bottom: 0.25rem;
-  }
-
-  .subtitle {
-    font-size: 0.7rem;
-    color: rgba(248,244,238,0.4);
-    letter-spacing: 0.1em;
-  }
-
-  /* Scanner */
-  .scanner-card {
-    background: linear-gradient(135deg, rgba(13,34,71,0.9) 0%, rgba(26,58,110,0.6) 100%);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    margin-bottom: 1.5rem;
-  }
-
-  .scanner-label {
-    padding: 1rem 1.5rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    text-transform: uppercase;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .scanner-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, rgba(201,168,76,0.3), transparent);
-  }
-
-  .video-wrap {
-    position: relative;
-    aspect-ratio: 1;
-    background: #000;
-    overflow: hidden;
-  }
-
-  #video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .scan-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-
-  .scan-frame {
-    width: 60%;
-    aspect-ratio: 1;
-    border: 2px solid var(--gold);
-    border-radius: 8px;
-    position: relative;
-    box-shadow: 0 0 0 9999px rgba(0,0,0,0.4);
-  }
-
-  .scan-frame::before,
-  .scan-frame::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-color: var(--cyan);
-    border-style: solid;
-  }
-
-  .scan-frame::before {
-    top: -2px; left: -2px;
-    border-width: 3px 0 0 3px;
-    border-radius: 4px 0 0 0;
-  }
-
-  .scan-frame::after {
-    bottom: -2px; right: -2px;
-    border-width: 0 3px 3px 0;
-    border-radius: 0 0 4px 0;
-  }
-
-  .scan-line {
-    position: absolute;
-    left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(to right, transparent, var(--cyan), transparent);
-    animation: scanLine 2s ease-in-out infinite;
-    top: 0;
-  }
-
-  @keyframes scanLine {
-    0% { top: 0%; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { top: 100%; opacity: 0; }
-  }
-
-  .start-btn {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-    border: none;
-    border-radius: 0;
-    color: var(--navy);
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 0.1em;
-    transition: all 0.2s;
-  }
-
-  .start-btn:hover { opacity: 0.9; }
-
-  /* Result */
-  .result-card {
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    display: none;
-    animation: resultIn 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-  }
-
-  .result-card.visible { display: block; }
-
-  @keyframes resultIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .result-card.success {
-    background: linear-gradient(135deg, rgba(39,174,96,0.2) 0%, rgba(39,174,96,0.1) 100%);
-    border: 1px solid rgba(39,174,96,0.4);
-  }
-
-  .result-card.error {
-    background: linear-gradient(135deg, rgba(192,57,43,0.2) 0%, rgba(192,57,43,0.1) 100%);
-    border: 1px solid rgba(192,57,43,0.4);
-  }
-
-  .result-icon {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 0.75rem;
-  }
-
-  .result-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    text-align: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .result-card.success .result-title { color: #2ecc71; }
-  .result-card.error .result-title { color: #e74c3c; }
-
-  .result-detail {
-    font-size: 0.8rem;
-    color: rgba(248,244,238,0.6);
-    text-align: center;
-    line-height: 1.7;
-  }
-
-  .result-info {
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    margin-top: 1rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    color: rgba(248,244,238,0.6);
-    line-height: 1.8;
-  }
-
-  /* History */
-  .history-card {
-    background: linear-gradient(135deg, rgba(13,34,71,0.9) 0%, rgba(26,58,110,0.6) 100%);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .history-label {
-    padding: 1rem 1.5rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    text-transform: uppercase;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .history-count {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--gold-light);
-  }
-
-  .history-list {
-    max-height: 200px;
-    overflow-y: auto;
-  }
-
-  .history-item {
-    padding: 0.75rem 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.75rem;
-  }
-
-  .history-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .history-dot.success { background: var(--green); }
-  .history-dot.error { background: var(--red); }
-
-  .history-id {
-    font-family: 'DM Mono', monospace;
-    color: rgba(248,244,238,0.7);
-    flex: 1;
-  }
-
-  .history-time {
-    color: rgba(248,244,238,0.3);
-    font-family: 'DM Mono', monospace;
-  }
-
-  .empty-history {
-    padding: 2rem;
-    text-align: center;
-    font-size: 0.8rem;
-    color: rgba(248,244,238,0.3);
-  }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <div class="staff-badge">Staff Only</div>
-    <div class="title">入場 読み取り機</div>
-    <div class="subtitle">What we call Magic ! — 本郷祭 2025</div>
-  </div>
-
-  <div class="result-card" id="resultCard">
-    <div class="result-icon" id="resultIcon"></div>
-    <div class="result-title" id="resultTitle"></div>
-    <div class="result-detail" id="resultDetail"></div>
-    <div class="result-info" id="resultInfo" style="display:none"></div>
-  </div>
-
-  <div class="scanner-card">
-    <div class="scanner-label">QRコードをスキャン</div>
-    <div class="video-wrap">
-      <video id="video" playsinline autoplay muted></video>
-      <div class="scan-overlay">
-        <div class="scan-frame">
-          <div class="scan-line"></div>
-        </div>
-      </div>
-    </div>
-    <button class="start-btn" id="startBtn" onclick="startScan()">📷 カメラを起動してスキャン開始</button>
-  </div>
-
-  <div class="history-card">
-    <div class="history-label">
-      スキャン履歴
-      <span class="history-count" id="historyCount">0件</span>
-    </div>
-    <div class="history-list" id="historyList">
-      <div class="empty-history">まだスキャンされていません</div>
-    </div>
-  </div>
-</div>
-
 <script>
   let scanning = false;
   let stream = null;
   const scannedIds = new Set();
   const history = [];
 
-  // Sound generation using Web Audio API
-  function playSound(type) {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (type === 'success') {
-      // 成功音：明るい2音
-      [523, 784].forEach((freq, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = freq;
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.3);
-        osc.start(ctx.currentTime + i * 0.15);
-        osc.stop(ctx.currentTime + i * 0.15 + 0.3);
-      });
-    } else {
-      // 失敗音：低い2音
-      [200, 150].forEach((freq, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = freq;
-        osc.type = 'sawtooth';
-        gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.2);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.2 + 0.3);
-        osc.start(ctx.currentTime + i * 0.2);
-        osc.stop(ctx.currentTime + i * 0.2 + 0.3);
-      });
-    }
-  }
-
-  function showResult(type, data) {
-    const card = document.getElementById('resultCard');
-    const icon = document.getElementById('resultIcon');
-    const title = document.getElementById('resultTitle');
-    const detail = document.getElementById('resultDetail');
-    const info = document.getElementById('resultInfo');
-
-    card.className = 'result-card visible ' + type;
-
-    if (type === 'success') {
-      icon.textContent = '✅';
-      title.textContent = '入場を確認しました';
-      detail.textContent = 'ようこそ、不思議な国へ！\nWhat we call Magic ! をお楽しみください。';
-      if (data) {
-        info.style.display = 'block';
-        info.innerHTML = `チケットID: ${data.id}<br>種別: ${data.type === 'adult' ? '大人' : '子供'}<br>枚数: ${data.count}枚`;
-      }
-      playSound('success');
-    } else {
-      icon.textContent = '❌';
-      title.textContent = '読み取りに失敗しました';
-      detail.textContent = type === 'duplicate'
-        ? 'このチケットはすでに使用されています。\nスタッフにお声がけください。'
-        : 'QRコードを正しく読み取れませんでした。\nもう一度お試しください。';
-      info.style.display = 'none';
-      playSound('error');
-    }
-
-    // Auto hide after 4s
-    setTimeout(() => {
-      card.classList.remove('visible');
-    }, 4000);
-  }
-
-  function addHistory(type, id) {
-    const now = new Date();
-    const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
-    history.unshift({ type, id, time });
-
-    const list = document.getElementById('historyList');
-    list.innerHTML = history.slice(0, 20).map(h => `
-      <div class="history-item">
-        <div class="history-dot ${h.type}"></div>
-        <div class="history-id">${h.id || '不明なQR'}</div>
-        <div class="history-time">${h.time}</div>
-      </div>
-    `).join('');
-
-    document.getElementById('historyCount').textContent = history.length + '件';
-  }
-
   async function startScan() {
     if (scanning) return;
+
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      document.getElementById('video').srcObject = stream;
-      document.getElementById('startBtn').textContent = '📷 スキャン中...';
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: 'environment' },
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      });
+
+      const video = document.getElementById('video');
+      video.srcObject = stream;
+
+      // ←これ重要
+      await video.play();
+
+      document.getElementById('startBtn').textContent =
+        '📷 スキャン中...';
       document.getElementById('startBtn').disabled = true;
+
       scanning = true;
+
       requestAnimationFrame(tick);
+
     } catch (e) {
-      alert('カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。');
+      console.error(e);
+      alert('カメラへのアクセスが拒否されました。ブラウザ設定を確認してください。');
     }
   }
 
   function tick() {
+    if (!scanning) return;
+
     const video = document.getElementById('video');
-    if (!scanning || video.readyState !== video.HAVE_ENOUGH_DATA) {
-      if (scanning) requestAnimationFrame(tick);
+
+    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+      requestAnimationFrame(tick);
       return;
     }
 
     const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+    ctx.drawImage(video, 0, 0);
+
+    const imageData = ctx.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    // ←認識感度UP
+    const code = jsQR(
+      imageData.data,
+      imageData.width,
+      imageData.height,
+      {
+        inversionAttempts: 'attemptBoth'
+      }
+    );
 
     if (code) {
+      console.log('QR検出:', code.data);
+
       try {
         const data = JSON.parse(code.data);
+
         if (data.id) {
+
           if (scannedIds.has(data.id)) {
             showResult('duplicate', data);
             addHistory('error', data.id);
+
           } else {
             scannedIds.add(data.id);
             showResult('success', data);
             addHistory('success', data.id);
           }
-          // Pause briefly after scan
+
           scanning = false;
+
           setTimeout(() => {
             scanning = true;
             requestAnimationFrame(tick);
           }, 3000);
+
           return;
         }
+
       } catch (e) {
-        showResult('error', null);
+        console.error('JSON parse error', e);
+
+        showResult('error');
         addHistory('error', '不明');
+
         scanning = false;
+
         setTimeout(() => {
           scanning = true;
           requestAnimationFrame(tick);
         }, 2000);
+
         return;
       }
     }
@@ -521,5 +119,3 @@
     requestAnimationFrame(tick);
   }
 </script>
-</body>
-</html>
