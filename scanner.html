@@ -468,27 +468,27 @@
     document.getElementById('historyCount').textContent = history.length + '件';
   }
   // --- ここまで ---
-  function addHistory(type, id) {
+ function addHistory(type, id) {
     const now = new Date();
     const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
-    // 履歴保存処理...
+    
+    // 既存の履歴保存処理
     history.unshift({ type, id, time });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
     updateHistoryList();
     
     // --- スプレッドシートへ送信 ---
-    const url = '★https://script.google.com/a/macros/hongo.ed.jp/s/AKfycbzjw1id_tNgrUGCgakGccAsAvAw2iW1Ac6XScRRTt2vTDNd4fVEYBNV6xT1D6c6csS1/exec★';
+    // 絶対に「https://」から始まるURLをそのまま貼り付けてください
+    const gasUrl = 'https://script.google.com/a/macros/hongo.ed.jp/s/AKfycbzhf9gfilZD8inM--MJ7-spt_PfCnH3FCBlrw-XMujdYZe6jAkTEzqJQyV_kpXKk2x9/exec';
     
-    // パラメータをURL形式で作成
     const params = new URLSearchParams({
       time: time,
       id: id,
       type: type
     });
 
-    // fetchで送信
-    fetch(`${url}?${params.toString()}`, {
-      method: 'POST',
+    fetch(`${gasUrl}?${params.toString()}`, {
+      method: 'GET', // 405エラーを避けるためにGETを使用
       mode: 'no-cors'
     }).catch(err => console.error("送信エラー:", err));
   }
