@@ -4,156 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>読み取り機 — What we call Magic !</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+
+<style>
+body{
+  font-family:sans-serif;
+  background:#0a1628;
+  color:white;
+  text-align:center;
+  margin:0;
+  padding:20px;
+}
+
+h1{
+  margin-bottom:20px;
+}
+
+#video{
+  width:100%;
+  max-width:420px;
+  border-radius:16px;
+  background:black;
+}
+
+button{
+  margin-top:16px;
+  padding:14px 20px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+#result{
+  margin-top:20px;
+  font-size:18px;
+}
+
+#history{
+  margin-top:24px;
+  text-align:left;
+  max-width:420px;
+  margin-left:auto;
+  margin-right:auto;
+}
+</style>
+</head>
+
+<body>
+
+<h1>QR読み取り機</h1>
+
+<video
+  id="video"
+  autoplay
+  playsinline
+></video>
+
+<br>
+
+<button id="startBtn" onclick="startScan()">
+  📷 カメラ起動
+</button>
+
+<div id="result"></div>
+
+<div id="history"></div>
+
 <script>
 let scanning = false;
 let stream = null;
 const scannedIds = new Set();
-const history = [];
-
-function playSound(type) {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-
-  const freqs =
-    type === 'success'
-      ? [523, 784]
-      : [200, 150];
-
-  freqs.forEach((freq, i) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.frequency.value = freq;
-    osc.type =
-      type === 'success'
-        ? 'sine'
-        : 'sawtooth';
-
-    gain.gain.setValueAtTime(
-      0.2,
-      ctx.currentTime + i * 0.15
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-      0.001,
-      ctx.currentTime + i * 0.15 + 0.3
-    );
-
-    osc.start(ctx.currentTime + i * 0.15);
-    osc.stop(ctx.currentTime + i * 0.15 + 0.3);
-  });
-}
-
-function showResult(type, data) {
-  const card =
-    document.getElementById('resultCard');
-  const icon =
-    document.getElementById('resultIcon');
-  const title =
-    document.getElementById('resultTitle');
-  const detail =
-    document.getElementById('resultDetail');
-  const info =
-    document.getElementById('resultInfo');
-
-  card.className =
-    'result-card visible ' + type;
-
-  if (type === 'success') {
-    icon.textContent = '✅';
-    title.textContent =
-      '入場を確認しました';
-
-    detail.textContent =
-      'ようこそ、不思議な国へ！';
-
-    info.style.display = 'block';
-
-    info.innerHTML =
-      'チケットID: ' + data.id +
-      '<br>種別: ' +
-      (data.type === 'adult'
-        ? '大人'
-        : '子供') +
-      '<br>枚数: ' +
-      data.count + '枚';
-
-    playSound('success');
-
-  } else if (type === 'duplicate') {
-    icon.textContent = '⚠️';
-    title.textContent =
-      'すでに使用済み';
-
-    detail.textContent =
-      'このチケットは既に使われています';
-
-    info.style.display = 'none';
-
-    playSound('error');
-
-  } else {
-    icon.textContent = '❌';
-    title.textContent =
-      '読み取り失敗';
-
-    detail.textContent =
-      'QRコードを認識できませんでした';
-
-    info.style.display = 'none';
-
-    playSound('error');
-  }
-
-  setTimeout(function () {
-    card.classList.remove('visible');
-  }, 4000);
-}
-
-function addHistory(type, id) {
-  const now = new Date();
-
-  const time =
-    now.getHours().toString().padStart(2, '0')
-    + ':' +
-    now.getMinutes().toString().padStart(2, '0')
-    + ':' +
-    now.getSeconds().toString().padStart(2, '0');
-
-  history.unshift({
-    type: type,
-    id: id,
-    time: time
-  });
-
-  const list =
-    document.getElementById('historyList');
-
-  let html = '';
-
-  history.slice(0, 20).forEach(function(h) {
-    html +=
-      '<div class="history-item">' +
-      '<div class="history-dot ' +
-      h.type + '"></div>' +
-      '<div class="history-id">' +
-      (h.id || '不明') +
-      '</div>' +
-      '<div class="history-time">' +
-      h.time +
-      '</div>' +
-      '</div>';
-  });
-
-  list.innerHTML = html;
-
-  document.getElementById(
-    'historyCount'
-  ).textContent =
-    history.length + '件';
-}
 
 async function startScan() {
   if (scanning) return;
@@ -173,24 +95,18 @@ async function startScan() {
 
     await video.play();
 
+    scanning = true;
+
     document.getElementById(
       'startBtn'
     ).textContent =
       '📷 スキャン中...';
 
-    document.getElementById(
-      'startBtn'
-    ).disabled = true;
-
-    scanning = true;
-
     requestAnimationFrame(tick);
 
   } catch (e) {
     console.error(e);
-    alert(
-      'カメラを起動できませんでした'
-    );
+    alert('カメラを起動できませんでした');
   }
 }
 
@@ -241,42 +157,53 @@ function tick() {
   );
 
   if (code) {
-    console.log(code.data);
-
     try {
       const data =
         JSON.parse(code.data);
 
+      const result =
+        document.getElementById(
+          'result'
+        );
+
       if (
         scannedIds.has(data.id)
       ) {
-        showResult(
-          'duplicate',
-          data
-        );
-
-        addHistory(
-          'error',
-          data.id
-        );
+        result.innerHTML =
+          '⚠️ 使用済み: ' +
+          data.id;
 
       } else {
         scannedIds.add(data.id);
 
-        showResult(
-          'success',
-          data
+        result.innerHTML =
+          '✅ 入場OK<br>' +
+          data.id +
+          '<br>' +
+          (data.type === 'adult'
+            ? '大人'
+            : '子供') +
+          ' / ' +
+          data.count +
+          '枚';
+      }
+
+      const history =
+        document.getElementById(
+          'history'
         );
 
-        addHistory(
-          'success',
-          data.id
-        );
-      }
+      history.innerHTML =
+        '<div>' +
+        new Date().toLocaleTimeString()
+        + ' - ' +
+        data.id +
+        '</div>' +
+        history.innerHTML;
 
       scanning = false;
 
-      setTimeout(function () {
+      setTimeout(() => {
         scanning = true;
         requestAnimationFrame(tick);
       }, 3000);
@@ -285,13 +212,6 @@ function tick() {
 
     } catch (e) {
       console.error(e);
-
-      showResult('error');
-
-      addHistory(
-        'error',
-        '不明'
-      );
     }
   }
 
@@ -299,4 +219,5 @@ function tick() {
 }
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+</body>
+</html>
