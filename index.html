@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>入場チケット — What we call Magic !</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --primary-blue: #004aad;
+    --bright-cyan: #0cc0df;
+    --light-cyan: #1eabf9;
+    --dark-navy: #0a1628;
+    --deep-blue: #0d2247;
+    --accent-purple: #5251c2;
+    --accent-green: #17fd48;
+    --white: #f8f4ee;
+    --cream: #f0e9d6;
+    --text: #1a1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: linear-gradient(135deg, var(--dark-navy) 0%, var(--deep-blue) 50%, var(--primary-blue) 100%);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(12,192,223,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(30,171,249,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(82,81,194,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 70%, rgba(23,253,72,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 90%, rgba(12,192,223,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 70% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 50%, rgba(30,171,249,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-top: 1rem;
+  }
+
+  .logo-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logo-container img {
+    max-width: 100%;
+    height: auto;
+    width: 320px;
+    filter: drop-shadow(0 4px 20px rgba(12,192,223,0.3));
+  }
+
+  .sparkle {
+    color: var(--bright-cyan);
+    font-size: 1.5rem;
+    letter-spacing: 0.3em;
+    display: block;
+    margin-bottom: 0.5rem;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--bright-cyan);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    display: none;
+  }
+
+  .subtitle {
+    font-size: 1.6rem;
+    color: rgba(248,244,238,0.7);
+    letter-spacing: 0.1em;
+    margin-top: 1rem;
+    font-weight: 700;
+  }
+
+  /* Form card */
+  .card {
+    background: linear-gradient(135deg, rgba(0,74,173,0.15) 0%, rgba(12,192,223,0.1) 100%);
+    border: 1px solid rgba(12,192,223,0.4);
+    border-radius: 16px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(12,192,223,0.2);
+  }
+
+  .card-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--bright-cyan);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(12,192,223,0.4), transparent);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(248,244,238,0.7);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Type selector */
+  .type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .type-btn {
+    background: rgba(12,192,223,0.08);
+    border: 2px solid rgba(12,192,223,0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    color: var(--white);
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .type-btn:hover {
+    background: rgba(12,192,223,0.2);
+    border-color: rgba(12,192,223,0.8);
+    transform: translateY(-2px);
+  }
+
+  .type-btn.selected {
+    background: rgba(12,192,223,0.35);
+    border-color: var(--bright-cyan);
+    box-shadow: 0 0 20px rgba(12,192,223,0.5);
+    transform: translateY(-2px);
+  }
+
+  .type-btn .type-icon { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+  .type-btn .type-name { font-size: 0.9rem; font-weight: 500; }
+  .type-btn .type-note { font-size: 0.7rem; color: rgba(248,244,238,0.5); margin-top: 0.2rem; }
+
+  /* Count selector */
+  .count-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(12,192,223,0.08);
+    border: 2px solid rgba(12,192,223,0.3);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+  }
+
+  .count-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid rgba(12,192,223,0.6);
+    background: rgba(12,192,223,0.2);
+    color: var(--bright-cyan);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: bold;
+  }
+
+  .count-btn:hover { 
+    background: rgba(12,192,223,0.35);
+    border-color: var(--bright-cyan);
+    transform: scale(1.1);
+  }
+
+  .count-display {
+    flex: 1;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 1.5rem;
+    color: var(--white);
+  }
+
+  .count-label {
+    font-size: 0.75rem;
+    color: rgba(248,244,238,0.5);
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--bright-cyan) 0%, var(--light-cyan) 50%, var(--bright-cyan) 100%);
+    background-size: 200% 100%;
+    border: none;
+    border-radius: 10px;
+    color: var(--dark-navy);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 15px rgba(12,192,223,0.3);
+  }
+
+  .submit-btn:hover {
+    background-position: 100% 0;
+    box-shadow: 0 8px 30px rgba(12,192,223,0.6);
+    transform: translateY(-2px);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  /* Ticket display */
+  .ticket-wrap {
+    display: none;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .ticket-wrap.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tickets-container {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    padding: 0 1.5rem 1rem 1.5rem; /* 左右にパディングを追加して見切れを表現 */
+    scroll-snap-type: x mandatory; /* スナップを有効にする */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
+  }
+
+  .tickets-container.at-start {
+    mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
+  }
+
+  .tickets-container.at-end {
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
+  }
+
+  .tickets-container.at-both {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .tickets-container::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .tickets-container::-webkit-scrollbar-track {
+    background: rgba(12,192,223,0.1);
+    border-radius: 2px;
+  }
+
+  .tickets-container::-webkit-scrollbar-thumb {
+    background: rgba(12,192,223,0.4);
+    border-radius: 2px;
+  }
+
+  .tickets-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(12,192,223,0.6);
+  }
+
+  .ticket-slide {
+    flex: 0 0 calc(100% - 3rem); /* 左右に1.5remずつ見切れるように調整 */
+    min-width: 0;
+    scroll-snap-align: center; /* 中央にスナップ */
+  }
+
+  .ticket {
+    background: var(--cream);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    position: relative;
+    height: 100%;
+  }
+
+  .ticket-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-cyan) 100%);
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .ticket-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; 
+    right: 0;
+    height: 30px;
+    background: var(--cream);
+    /* 3つの波を描画 */
+    clip-path: path('M 0,15 Q 80,0 160,15 Q 240,30 320,15 Q 400,0 480,15 L 480,30 L 0,30 Z');
+  }
+
+  .ticket-event {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .ticket-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--white);
+    font-weight: 700;
+  }
+
+  .ticket-body {
+    padding: 2rem 1.5rem 1.5rem;
+    color: var(--text);
+  }
+
+  .ticket-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .ticket-info-label {
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.5);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ticket-info-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .ticket-divider {
+    height: 1px;
+    background: repeating-linear-gradient(to right, rgba(26,26,46,0.15) 0, rgba(26,26,46,0.15) 5px, transparent 5px, transparent 10px);
+    margin: 1rem 0;
+  }
+
+  .ticket-type-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-adult {
+    background: rgba(0,74,173,0.15);
+    color: var(--primary-blue);
+    border: 1px solid rgba(0,74,173,0.3);
+  }
+
+  .badge-middle {
+    background: rgba(12,192,223,0.15);
+    color: #006d8f;
+    border: 1px solid rgba(12,192,223,0.4);
+  }
+
+  .badge-child {
+    background: rgba(82,81,194,0.15);
+    color: #3d3c7a;
+    border: 1px solid rgba(82,81,194,0.3);
+  }
+
+  .qr-section {
+    text-align: center;
+    padding: 1rem 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #qrcode {
+    display: inline-block;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  .qr-note {
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.5);
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Admitted state */
+  .admitted-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(240,233,214,0.92);
+    border-radius: 16px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    animation: fadeIn 0.5s ease;
+    z-index: 10;
+  }
+
+  .admitted-overlay.visible { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .admitted-stamp {
+    width: 120px;
+    height: 120px;
+    border: 4px solid #c0392b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transform: rotate(-15deg);
+    animation: stampIn 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+
+  @keyframes stampIn {
+    0% { transform: rotate(-15deg) scale(3); opacity: 0; }
+    60% { transform: rotate(-15deg) scale(0.9); }
+    100% { transform: rotate(-15deg) scale(1); opacity: 1; }
+  }
+
+  .admitted-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #c0392b;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .admitted-sub {
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.5);
+    letter-spacing: 0.1em;
+  }
+
+  /* Ticket footer */
+  .ticket-footer {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-cyan) 100%);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ticket-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(248,244,238,0.4);
+    letter-spacing: 0.1em;
+  }
+
+  .ticket-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ticket-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(12,192,223,0.3);
+  }
+
+  .ticket-dot:nth-child(2) { background: rgba(12,192,223,0.6); }
+  .ticket-dot:nth-child(3) { background: var(--bright-cyan); }
+
+  /* Delete button */
+  .ticket-delete-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(192,57,43,0.2);
+    border: 2px solid rgba(192,57,43,0.6);
+    color: #e74c3c;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 5;
+  }
+
+  .ticket-delete-btn:hover {
+    background: rgba(192,57,43,0.4);
+    border-color: #e74c3c;
+    transform: scale(1.1);
+  }
+
+  /* Simulate admit button */
+  .simulate-btn {
+    width: 100%;
+    padding: 0.875rem;
+    background: rgba(23,253,72,0.15);
+    border: 2px solid rgba(23,253,72,0.6);
+    border-radius: 10px;
+    color: rgba(23,253,72,0.9);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+
+  .simulate-btn:hover {
+    background: rgba(23,253,72,0.25);
+    border-color: rgba(23,253,72,0.9);
+    box-shadow: 0 4px 15px rgba(23,253,72,0.3);
+    transform: translateY(-1px);
+  }
+
+  .back-btn {
+    width: 100%;
+    padding: 0.875rem;
+    background: rgba(248,244,238,0.1);
+    border: 2px solid rgba(248,244,238,0.3);
+    border-radius: 10px;
+    color: rgba(248,244,238,0.8);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    margin-top: 0.75rem;
+    font-weight: 600;
+  }
+
+  .back-btn:hover {
+    background: rgba(248,244,238,0.15);
+    border-color: rgba(248,244,238,0.6);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(248,244,238,0.2);
+    transform: translateY(-1px);
+  }
+
+  /* Scanner page link */
+  .scanner-link {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.7rem;
+    color: rgba(248,244,238,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .scanner-link a {
+    color: rgba(12,192,223,0.6);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(12,192,223,0.3);
+    padding-bottom: 1px;
+  }
+
+  .scanner-link a:hover { color: var(--bright-cyan); }
+
+  /* Footer */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(10,22,40,0.8);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(12,192,223,0.2);
+    z-index: 50;
+  }
+
+  .footer-logo {
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-logo img {
+    height: 100%;
+    width: auto;
+    filter: drop-shadow(0 2px 8px rgba(12,192,223,0.2));
+  }
+
+  .footer-text {
+    font-size: 0.65rem;
+    color: rgba(248,244,238,0.4);
+    margin-left: 1rem;
+    letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo-container">
+      <img src="Whatwecall.svg" alt="What we call Magic!">
+    </div>
+    <div class="subtitle">本郷祭 2026 — 入場チケット</div>
+  </div>
+
+  <!-- Form -->
+  <div class="card" id="formCard">
+    <div class="card-label">チケット発券</div>
+
+<div class="form-group">
+      <label>種別と枚数を選択してください</label>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;">
+
+        <!-- 大人 -->
+        <div style="background:rgba(12,192,223,0.08);border:2px solid rgba(12,192,223,0.3);border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <span style="font-size:1.4rem;">🎩</span>
+            <div>
+              <div style="font-size:0.9rem;font-weight:500;color:var(--white);">大人</div>
+              <div style="font-size:0.7rem;color:rgba(248,244,238,0.4);">大学生以上</div>
+            </div>
+          </div>
+          <div class="count-selector" style="border:none;background:none;padding:0;gap:0.5rem;width:auto;">
+            <button class="count-btn" onclick="changeCount('adult',-1)">−</button>
+            <div class="count-display" id="countAdult" style="font-size:1.2rem;min-width:28px;">0</div>
+            <button class="count-btn" onclick="changeCount('adult',1)">＋</button>
+          </div>
+        </div>
+
+        <!-- 中人 -->
+        <div style="background:rgba(12,192,223,0.08);border:2px solid rgba(12,192,223,0.3);border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <span style="font-size:1.4rem;">🎒</span>
+            <div>
+              <div style="font-size:0.9rem;font-weight:500;color:var(--white);">中人</div>
+              <div style="font-size:0.7rem;color:rgba(248,244,238,0.4);">中高生</div>
+            </div>
+          </div>
+          <div class="count-selector" style="border:none;background:none;padding:0;gap:0.5rem;width:auto;">
+            <button class="count-btn" onclick="changeCount('middle',-1)">−</button>
+            <div class="count-display" id="countMiddle" style="font-size:1.2rem;min-width:28px;">0</div>
+            <button class="count-btn" onclick="changeCount('middle',1)">＋</button>
+          </div>
+        </div>
+
+        <!-- 小人 -->
+        <div style="background:rgba(12,192,223,0.08);border:2px solid rgba(12,192,223,0.3);border-radius:10px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <span style="font-size:1.4rem;">⚽️</span>
+            <div>
+              <div style="font-size:0.9rem;font-weight:500;color:var(--white);">小人</div>
+              <div style="font-size:0.7rem;color:rgba(248,244,238,0.4);">小学生以下</div>
+            </div>
+          </div>
+          <div class="count-selector" style="border:none;background:none;padding:0;gap:0.5rem;width:auto;">
+            <button class="count-btn" onclick="changeCount('child',-1)">−</button>
+            <div class="count-display" id="countChild" style="font-size:1.2rem;min-width:28px;">0</div>
+            <button class="count-btn" onclick="changeCount('child',1)">＋</button>
+          </div>
+        </div>
+
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.75rem;color:rgba(248,244,238,0.4);text-align:right;">
+        合計 <span id="totalCount" style="font-family:'DM Mono',monospace;color:var(--bright-cyan);">0</span> 枚
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="issueTicket()">✦ チケットを発券する</button>
+    <button class="submit-btn" style="background:linear-gradient(135deg,rgba(23,253,72,0.4) 0%,rgba(23,253,72,0.3) 50%,rgba(23,253,72,0.4) 100%);color:rgba(23,253,72,0.9);border:2px solid rgba(23,253,72,0.6);margin-top:0.75rem;" onclick="showTickets()">📋 発券済みのチケットを表示</button>
+  </div>
+
+  <!-- Tickets Display -->
+  <div class="ticket-wrap" id="ticketWrap">
+    <div class="tickets-container" id="ticketsContainer"></div>
+
+    <button class="back-btn" onclick="goBack()">← 新しいチケットを発券する</button>
+  </div>
+
+  <div class="scanner-link">
+    スタッフの方は <a href="#" onclick="checkPassword(event)">読み取り機ページ</a> へ
+  </div>
+
+  <!-- Password modal -->
+  <div id="pwModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+    <div style="background:linear-gradient(135deg,rgba(0,74,173,0.98) 0%,rgba(12,192,223,0.95) 100%);border:1px solid rgba(12,192,223,0.4);border-radius:16px;padding:2rem;width:90%;max-width:320px;box-shadow:0 30px 80px rgba(0,0,0,0.6);">
+      <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--bright-cyan);text-align:center;margin-bottom:0.25rem;">Staff Access</div>
+      <div style="font-size:0.7rem;color:rgba(248,244,238,0.4);text-align:center;letter-spacing:0.1em;margin-bottom:1.5rem;">読み取り機ページへのアクセス</div>
+      <input id="pwInput" type="password" placeholder="パスワードを入力"
+        style="width:100%;padding:0.75rem 1rem;background:rgba(255,255,255,0.07);border:1px solid rgba(12,192,223,0.3);border-radius:8px;color:var(--white);font-family:'DM Mono',monospace;font-size:1rem;letter-spacing:0.2em;text-align:center;outline:none;margin-bottom:0.5rem;"
+        onkeydown="if(event.key==='Enter')submitPassword()">
+      <div id="pwError" style="font-size:0.75rem;color:#e74c3c;text-align:center;min-height:1.2em;margin-bottom:0.75rem;"></div>
+      <button onclick="submitPassword()" style="width:100%;padding:0.875rem;background:linear-gradient(135deg,var(--bright-cyan) 0%,var(--light-cyan) 100%);border:none;border-radius:8px;color:var(--primary-blue);font-family:'Noto Serif JP',serif;font-size:0.95rem;font-weight:700;cursor:pointer;letter-spacing:0.1em;margin-bottom:0.5rem;">確認</button>
+      <button onclick="closeModal()" style="width:100%;padding:0.75rem;background:transparent;border:1px solid rgba(248,244,238,0.15);border-radius:8px;color:rgba(248,244,238,0.4);font-family:'Noto Serif JP',serif;font-size:0.8rem;cursor:pointer;letter-spacing:0.1em;">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="footer-logo">
+    <img src="14.svg" alt="WWCM">
+  </div>
+  <div class="footer-text">What we call Magic</div>
+</div>
+
+<script>
+  const SCANNER_PASSWORD = '00';
+  const STORAGE_KEY = 'wwcm_tickets';
+
+  function checkPassword(e) {
+    e.preventDefault();
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwError').textContent = '';
+    document.getElementById('pwModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('pwInput').focus(), 100);
+  }
+
+  function submitPassword() {
+    const input = document.getElementById('pwInput').value;
+    if (input === SCANNER_PASSWORD) {
+      document.getElementById('pwModal').style.display = 'none';
+      window.location.href = 'scanner.html';
+    } else {
+      document.getElementById('pwError').textContent = 'パスワードが違います';
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('pwModal').style.display = 'none';
+  }
+
+  const counts = { adult: 0, middle: 0, child: 0 };
+  let tickets = [];
+
+  const typeConfig = {
+    adult:  { label: '大人', icon: '🎩', badgeClass: 'badge-adult' },
+    middle: { label: '中人', icon: '🎒', badgeClass: 'badge-middle' },
+    child:  { label: '小人', icon: '⚽️', badgeClass: 'badge-child' },
+  };
+
+  // ページ読み込み時に保存済みチケットを復元
+  window.addEventListener('load', () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        tickets = JSON.parse(saved);
+        if (tickets.length > 0) {
+          displayTickets();
+        }
+      }
+    } catch(e) { 
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  });
+
+  function changeCount(type, delta) {
+    counts[type] = Math.max(0, Math.min(10, counts[type] + delta));
+    document.getElementById('count' + type.charAt(0).toUpperCase() + type.slice(1)).textContent = counts[type];
+    const total = counts.adult + counts.middle + counts.child;
+    document.getElementById('totalCount').textContent = total;
+  }
+
+  function generateId() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let id = 'WWCM-';
+    for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    return id;
+  }
+
+  function buildTicketHTML(ticket, index) {
+    const cfg = typeConfig[ticket.type];
+    const qrId = 'qr-' + ticket.id;
+    const ticketNumber = index + 1;
+    const totalTickets = tickets.length;
+    return `
+      <div class="ticket-slide">
+        <div class="ticket" style="position:relative;">
+          <button class="ticket-delete-btn" onclick="deleteTicket('${ticket.id}')">✕</button>
+          <div class="admitted-overlay" id="admitted-${ticket.id}">
+            <div class="admitted-stamp">
+              <div class="admitted-text">入場<br>済み</div>
+            </div>
+            <div class="admitted-sub">ADMITTED</div>
+          </div>
+          <div class="ticket-header">
+            <div class="ticket-event">HONGOFES 2026</div>
+            <div class="ticket-title">
+              <img src="Whatwecall.svg" alt="What we call Magic!" style="max-width:100%;height:auto;width:260px;">
+            </div>
+          </div>
+          <div class="ticket-body">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+              <span id="nickname-${ticket.id}" onclick="editNickname('${ticket.id}')" style="cursor:pointer;font-size:1.1rem;color:var(--text);font-weight:900;font-family:'Roboto',sans-serif;letter-spacing:0.05em;max-width:60%;word-break:break-all;">${ticket.nickname || 'タップして編集'}</span>
+              <span style="font-size:0.7rem;color:rgba(26,26,46,0.5);letter-spacing:0.1em;text-transform:uppercase;">${ticketNumber}/${totalTickets}</span>
+            </div>
+            <div class="ticket-info-row">
+              <span class="ticket-info-label">種別</span>
+              <span class="ticket-type-badge ${cfg.badgeClass}">${cfg.icon} ${cfg.label}</span>
+            </div>
+            <div class="ticket-info-row" style="margin-top:0.5rem">
+              <span class="ticket-info-label">発券日時</span>
+              <span class="ticket-info-value">${ticket.issuedAt}</span>
+            </div>
+            <div class="ticket-divider"></div>
+            <div class="qr-section">
+              <div id="${qrId}"></div>
+              <div class="qr-note">入場口でこのQRコードをご提示ください</div>
+            </div>
+          </div>
+          <div class="ticket-footer">
+            <span class="ticket-id">${ticket.id}</span>
+            <div class="ticket-dots">
+              <div class="ticket-dot"></div>
+              <div class="ticket-dot"></div>
+              <div class="ticket-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function saveTickets() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+  }
+
+  function displayTickets() {
+    const container = document.getElementById('ticketsContainer');
+    if (tickets.length === 0) {
+      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:300px;color:rgba(248,244,238,0.5);font-size:0.95rem;letter-spacing:0.05em;">取得済みのチケットはありません</div>';
+      document.getElementById('formCard').style.display = 'none';
+      const wrap = document.getElementById('ticketWrap');
+      wrap.classList.add('visible');
+      wrap.style.display = 'block';
+      return;
+    }
+    
+    container.innerHTML = tickets.map((t, i) => buildTicketHTML(t, i)).join('');
+    
+    // QRコードの生成
+    setTimeout(() => {
+      tickets.forEach((t) => {
+        const qrId = 'qr-' + t.id;
+        const elem = document.getElementById(qrId);
+        if (elem && elem.children.length === 0) {
+          new QRCode(elem, {
+            text: JSON.stringify({ id: t.id, type: t.type, issued: t.issued }),
+            width: 160, height: 160,
+            colorDark: '#000000', colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      });
+    }, 50);
+
+    document.getElementById('formCard').style.display = 'none';
+    const wrap = document.getElementById('ticketWrap');
+    wrap.classList.add('visible');
+    wrap.style.display = 'block';
+
+    // カルーセルのスクロール位置を監視
+    setTimeout(() => {
+      const container = document.getElementById('ticketsContainer');
+      const updateMask = () => {
+        const isAtStart = container.scrollLeft < 10;
+        const isAtEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth - 10;
+        
+        container.classList.remove('at-start', 'at-end', 'at-both');
+        if (isAtStart && isAtEnd) {
+          container.classList.add('at-both');
+        } else if (isAtStart) {
+          container.classList.add('at-start');
+        } else if (isAtEnd) {
+          container.classList.add('at-end');
+        }
+      };
+      
+      container.addEventListener('scroll', updateMask);
+      updateMask(); // 初期状態を設定
+    }, 100);
+  }
+
+  function issueTicket() {
+    const total = counts.adult + counts.middle + counts.child;
+    if (total === 0) {
+      alert('1枚以上選択してください。');
+      return;
+    }
+
+    const now = new Date();
+    const dateStr = now.toLocaleString('ja-JP', { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const nickname = document.getElementById('nicknameInput').value.trim();
+    
+    // 新しいチケットを追加
+    for (let t = 0; t < counts.adult; t++) {
+      tickets.push({
+        type: 'adult',
+        id: generateId(),
+        issued: now.getTime(),
+        issuedAt: dateStr,
+        admitted: false,
+        nickname: nickname
+      });
+    }
+    for (let t = 0; t < counts.middle; t++) {
+      tickets.push({
+        type: 'middle',
+        id: generateId(),
+        issued: now.getTime(),
+        issuedAt: dateStr,
+        admitted: false,
+        nickname: nickname
+      });
+    }
+    for (let t = 0; t < counts.child; t++) {
+      tickets.push({
+        type: 'child',
+        id: generateId(),
+        issued: now.getTime(),
+        issuedAt: dateStr,
+        admitted: false,
+        nickname: nickname
+      });
+    }
+
+    // カウントをリセット
+    counts.adult = 0;
+    counts.middle = 0;
+    counts.child = 0;
+    document.getElementById('countAdult').textContent = '0';
+    document.getElementById('countMiddle').textContent = '0';
+    document.getElementById('countChild').textContent = '0';
+    document.getElementById('totalCount').textContent = '0';
+
+
+    saveTickets();
+    displayTickets();
+  }
+
+  function deleteTicket(ticketId) {
+    if (!confirm('このチケットを削除しますか？')) return;
+    tickets = tickets.filter(t => t.id !== ticketId);
+    saveTickets();
+    
+    displayTickets(); // 削除後に再描画
+  }
+
+  function showTickets() {
+    if (tickets.length === 0) {
+      alert('発券済みのチケットはありません。');
+      return;
+    }
+    displayTickets();
+  }
+
+  function editNickname(ticketId) {
+    const ticket = tickets.find(t => t.id === ticketId);
+    if (!ticket) return;
+    
+    const newNickname = prompt('ニックネームを入力してください（15字以内）:', ticket.nickname || '');
+    if (newNickname === null) return; // キャンセルされた場合
+    
+    const trimmed = newNickname.trim().substring(0, 15);
+    ticket.nickname = trimmed;
+    saveTickets();
+    
+    // 表示を更新
+    const nicknameElement = document.getElementById('nickname-' + ticketId);
+    if (nicknameElement) {
+      nicknameElement.textContent = trimmed || 'タップして編集';
+    }
+  }
+
+  function goBack() {
+    counts.adult = 0;
+    counts.middle = 0;
+    counts.child = 0;
+    document.getElementById('countAdult').textContent = '0';
+    document.getElementById('countMiddle').textContent = '0';
+    document.getElementById('countChild').textContent = '0';
+    document.getElementById('totalCount').textContent = '0';
+
+    document.getElementById('formCard').style.display = 'block';
+    document.getElementById('ticketWrap').classList.remove('visible');
+    document.getElementById('ticketWrap').style.display = 'none';
+  }
+</script>
+</body>
+</html>
