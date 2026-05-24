@@ -367,7 +367,21 @@
 </div>
 
 <script>
-  let scanning = false;
+ // --- ここから追加 ---
+  const STORAGE_KEY = 'magic_scan_history';
+
+  // ページ読み込み時にlocalStorageから履歴を復元
+  window.onload = () => {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      history.push(...parsed);
+      updateHistoryList(); // 表示を更新する関数
+    }
+  };
+  // --- ここまで ---
+
+  let scanning = false; // 元々ここにある変数定義  
   let stream = null;
   const scannedIds = new Set();
   const history = [];
@@ -439,13 +453,11 @@
       card.classList.remove('visible');
     }, 4000);
   }
-
-  function addHistory(type, id) {
-    const now = new Date();
-    const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
-    history.unshift({ type, id, time });
-
+// --- ここから追加 ---
+  function updateHistoryList() {
     const list = document.getElementById('historyList');
+    if (history.length === 0) return;
+    
     list.innerHTML = history.slice(0, 20).map(h => `
       <div class="history-item">
         <div class="history-dot ${h.type}"></div>
@@ -453,10 +465,22 @@
         <div class="history-time">${h.time}</div>
       </div>
     `).join('');
-
     document.getElementById('historyCount').textContent = history.length + '件';
   }
-
+  // --- ここまで ---
+  function addHistory(type, id) {
+    const now = new Date();
+    const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
+    
+    // 履歴に追加
+    history.unshift({ type, id, time });
+    
+    // localStorageに保存
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    
+    // 表示を更新
+    updateHistoryList();
+  }
   async function startScan() {
     if (scanning) return;
     try {
