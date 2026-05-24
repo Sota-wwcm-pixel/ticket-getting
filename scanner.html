@@ -531,7 +531,7 @@
           } else {
             scannedIds.add(data.id);
             showResult('success', data);
-            addHistory('success', data.id);
+            addHistory(data.type, data.id);
           }
           // Pause briefly after scan
           scanning = false;
