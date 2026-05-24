@@ -705,11 +705,6 @@
     <div class="card-label">チケット発券</div>
 
     <div class="form-group">
-      <label>ニックネーム（オプション）</label>
-      <input type="text" id="nicknameInput" class="nickname-input" placeholder="15字以内でニックネームを入力" maxlength="15">
-    </div>
-
-    <div class="form-group">
       <label>種別と枚数を選択してください</label>
       <div style="display:flex;flex-direction:column;gap:0.75rem;">
 
@@ -1059,9 +1054,6 @@
   function editNickname(ticketId) {
     const ticket = tickets.find(t => t.id === ticketId);
     if (!ticket) return;
-    
-    const newNickname = prompt('ニックネームを入力してください（15字以内）:', ticket.nickname || '');
-    if (newNickname === null) return;
     
     const trimmed = newNickname.trim().substring(0, 15);
     ticket.nickname = trimmed;
