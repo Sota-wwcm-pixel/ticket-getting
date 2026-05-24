@@ -486,6 +486,10 @@
       mode: 'no-cors', // クロスオリジン対策
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ time: time, id: id, type: type })
+    }).then(() => {
+      console.log("スプレッドシートに保存しました");
+    }).catch((error) => {
+      console.error("送信に失敗しました:", error);
     });
   }
   async function startScan() {
