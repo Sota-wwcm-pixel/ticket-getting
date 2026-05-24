@@ -147,14 +147,27 @@ function tick() {
     );
 
   const code = jsQR(
-    imageData.data,
+  imageData.data,
+  imageData.width,
+  imageData.height,
+  {
+    inversionAttempts: 'attemptBoth'
+  }
+);
+
+// デバッグ
+if (Math.random() < 0.02) {
+  console.log(
+    'scan running',
     imageData.width,
-    imageData.height,
-    {
-      inversionAttempts:
-        'attemptBoth'
-    }
+    imageData.height
   );
+}
+
+if (code) {
+  console.log('QR FOUND');
+  console.log(code.data);
+}
 
   if (code) {
     try {
