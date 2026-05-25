@@ -480,26 +480,56 @@
     display: none;
     position: absolute;
     inset: 0;
+    background: rgba(240,233,214,0.92);
     border-radius: 16px;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.75rem;
+    animation: fadeIn 0.5s ease;
     z-index: 10;
-    pointer-events: none;
   }
 
   .admitted-overlay.visible { display: flex; }
 
-  .admitted-stamp-img {
-    width: 180px;
-    height: 180px;
-    object-fit: contain;
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .admitted-stamp {
+    width: 120px;
+    height: 120px;
+    border: 4px solid #c0392b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transform: rotate(-15deg);
     animation: stampIn 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
   }
 
   @keyframes stampIn {
-    0% { transform: scale(3); opacity: 0; }
-    60% { transform: scale(0.9); }
-    100% { transform: scale(1); opacity: 1; }
+    0% { transform: rotate(-15deg) scale(3); opacity: 0; }
+    60% { transform: rotate(-15deg) scale(0.9); }
+    100% { transform: rotate(-15deg) scale(1); opacity: 1; }
+  }
+
+  .admitted-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #c0392b;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .admitted-sub {
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.5);
+    letter-spacing: 0.1em;
   }
 
   /* Ticket footer */
@@ -662,6 +692,20 @@
 
   .ticket-container { position: relative; } /* チケット枠に相対位置を指定 */
   
+  .admitted-overlay {
+    display: none; /* 初期は非表示 */
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    border: 3px solid red;
+    color: red;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    pointer-events: none; /* 下のボタンを押せるようにする */
+    z-index: 10;
+  }
+  .admitted-overlay.visible { display: block; } /* visibleクラスがつくと表示 */
 </style>
 </head>
 <body>
@@ -782,7 +826,7 @@
     const input = document.getElementById('pwInput').value;
     if (input === SCANNER_PASSWORD) {
       document.getElementById('pwModal').style.display = 'none';
-      window.location.href = 'scanner.html';
+      window.location.href = 'scanner (2).html';
     } else {
       document.getElementById('pwError').textContent = 'パスワードが違います';
       document.getElementById('pwInput').value = '';
@@ -842,7 +886,10 @@
         <div class="ticket" style="position:relative;">
           <button class="ticket-delete-btn" onclick="deleteTicket('${ticket.id}')">✕</button>
           <div class="admitted-overlay" id="admitted-${ticket.id}">
-            <img src="_we_call_svgWhatスタンフ_.svg" class="admitted-stamp-img" alt="入場済み">
+            <div class="admitted-stamp">
+              <div class="admitted-text">入場<br>済み</div>
+            </div>
+            <div class="admitted-sub">ADMITTED</div>
           </div>
           <div class="ticket-header">
             <div class="ticket-event">HONGOFES 2026</div>
@@ -864,12 +911,9 @@
               <span class="ticket-info-value">${ticket.issuedAt}</span>
             </div>
             <div class="ticket-divider"></div>
-            <div class="qr-section" id="qr-section-${ticket.id}" style="position:relative;">
+            <div class="qr-section">
               <div id="${qrId}"></div>
               <div class="qr-note">入場口でこのQRコードをご提示ください</div>
-              <div id="qr-mask-${ticket.id}" style="display:none;position:absolute;inset:0;background:rgba(240,233,214,0.97);border-radius:8px;align-items:center;justify-content:center;">
-                <span style="font-family:'Playfair Display',serif;font-size:0.8rem;color:rgba(26,26,46,0.5);letter-spacing:0.1em;">ADMITTED</span>
-              </div>
             </div>
           </div>
           <div class="ticket-footer">
@@ -1026,13 +1070,7 @@ function issueTicket() {
     }
     displayTickets();
   }
-  
-<div class="ticket-container" id="ticket-${ticket.id}">
-  <div class="admitted-overlay" id="admitted-${ticket.id}">認証済み</div>
-  
-  <button onclick="saveTicketAsImage('${ticket.id}')">画像を保存</button>
-</div>
-  
+    
 function editNickname(ticketId) {
   const ticket = tickets.find(t => t.id === ticketId);
   if (!ticket) return;
@@ -1075,23 +1113,21 @@ function editNickname(ticketId) {
   }
 
   // 定期的にステータスをチェック
-setInterval(async () => {
-  try {
-    const response = await fetch('https://script.google.com/macros/s/AKfycby6V_PVtyvAWwBrn9bGuCZDwEqiuEJACaji0siv2dzipW7bGvqYDou4xnMQv4wZVH_2dw/exec');
-    const admittedIds = await response.json();
-    
-    admittedIds.forEach(id => {
-      const overlay = document.getElementById('admitted-' + id);
-      if (overlay) overlay.classList.add('visible');
-      const qrMask = document.getElementById('qr-mask-' + id);
-      if (qrMask) qrMask.style.display = 'flex';
-    });
-  } catch (e) {
-    console.error("同期失敗:", e);
+  async function checkAdmittedStatus() {
+    try {
+      const response = await fetch('https://script.google.com/macros/s/AKfycby6V_PVtyvAWwBrn9bGuCZDwEqiuEJACaji0siv2dzipW7bGvqYDou4xnMQv4wZVH_2dw/exec');
+      const admittedIds = await response.json();
+
+      admittedIds.forEach(id => {
+        const overlay = document.getElementById('admitted-' + id);
+        if (overlay) overlay.classList.add('visible');
+      });
+    } catch (e) {
+      console.error('同期失敗:', e);
+    }
   }
-}, 5000); // 5秒間隔
-  // 貼り付けたコードのすぐ下に、一度だけ実行する記述を追加
-  checkAdmittedStatus(); // （関数名をcheckAdmittedStatusにするなどして呼び出す）
+
+  checkAdmittedStatus();
   setInterval(checkAdmittedStatus, 5000);
   
 </script>
