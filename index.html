@@ -689,6 +689,23 @@
     margin-left: 1rem;
     letter-spacing: 0.05em;
   }
+
+  .ticket-container { position: relative; } /* チケット枠に相対位置を指定 */
+  
+  .admitted-overlay {
+    display: none; /* 初期は非表示 */
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    border: 3px solid red;
+    color: red;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    pointer-events: none; /* 下のボタンを押せるようにする */
+    z-index: 10;
+  }
+  .admitted-overlay.visible { display: block; } /* visibleクラスがつくと表示 */
 </style>
 </head>
 <body>
@@ -909,6 +926,7 @@
           </div>
         </div>
       </div>`;
+    
   }
 
   function saveTickets() {
@@ -1052,7 +1070,13 @@ function issueTicket() {
     }
     displayTickets();
   }
-
+  
+<div class="ticket-container" id="ticket-${ticket.id}">
+  <div class="admitted-overlay" id="admitted-${ticket.id}">認証済み</div>
+  
+  <button onclick="saveTicketAsImage('${ticket.id}')">画像を保存</button>
+</div>
+  
 function editNickname(ticketId) {
   const ticket = tickets.find(t => t.id === ticketId);
   if (!ticket) return;
