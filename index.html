@@ -1117,6 +1117,25 @@ function editNickname(ticketId) {
     document.getElementById('ticketWrap').classList.remove('visible');
     document.getElementById('ticketWrap').style.display = 'none';
   }
+
+  // 定期的にステータスをチェック
+setInterval(async () => {
+  try {
+    const response = await fetch('https://script.google.com/macros/s/AKfycby6V_PVtyvAWwBrn9bGuCZDwEqiuEJACaji0siv2dzipW7bGvqYDou4xnMQv4wZVH_2dw/exec');
+    const admittedIds = await response.json();
+    
+    admittedIds.forEach(id => {
+      const overlay = document.getElementById('admitted-' + id);
+      if (overlay) overlay.classList.add('visible'); // CSSでvisibleクラスを表示
+    });
+  } catch (e) {
+    console.error("同期失敗:", e);
+  }
+}, 5000); // 5秒間隔
+  // 貼り付けたコードのすぐ下に、一度だけ実行する記述を追加
+  checkAdmittedStatus(); // （関数名をcheckAdmittedStatusにするなどして呼び出す）
+  setInterval(checkAdmittedStatus, 5000);
+  
 </script>
 </body>
 </html>
