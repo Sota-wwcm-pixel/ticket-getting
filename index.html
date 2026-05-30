@@ -345,8 +345,9 @@
   }
 
   .ticket-slide {
-    flex: 0 0 calc(100% - 3rem);
-    min-width: 0;
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center; /* チケットを中央寄せ */
     scroll-snap-align: center;
   }
 
@@ -570,29 +571,15 @@
   /* Delete button */
   .ticket.saving .ticket-delete-btn { display:none !important; }
 
-  .ticket-delete-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(192,57,43,0.2);
-    border: 2px solid rgba(192,57,43,0.6);
-    color: #e74c3c;
-    font-size: 1.2rem;
+.save-ticket-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary-blue);
+    color: white;
+    text-align: center;
+    border: none;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    z-index: 5;
-  }
-
-  .ticket-delete-btn:hover {
-    background: rgba(192,57,43,0.4);
-    border-color: #e74c3c;
-    transform: scale(1.1);
+    font-size: 0.8rem;
   }
 
   /* Simulate admit button */
