@@ -352,7 +352,7 @@
 
   .ticket {
     aspect-ratio: 5 / 8;
-    width: 320px;
+    width: 300px;
     background: var(--cream);
     border-radius: 16px;
     overflow: hidden;
@@ -542,8 +542,21 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0;
+    margin-bottom: auto;
   }
+
+/* 新規：保存ボタンのスタイル */
+.save-ticket-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary-blue);
+  color: white;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: 'Noto Serif JP', serif;
+}
 
   .ticket-id {
     font-family: 'DM Mono', monospace;
@@ -958,10 +971,8 @@ opacity:0.9;
     return `
       <div class="ticket-slide" id="slide-${ticket.id}">
         <div class="ticket" id="ticket-el-${ticket.id}" style="position:relative;">
-          <button class="ticket-delete-btn" onclick="deleteTicket('${ticket.id}')">✕</button>
           <div class="admitted-overlay" id="admitted-${ticket.id}">
             <div class="admitted-stamp">
-              <div class="admitted-text">入場<br>済み</div>
             </div>
             <div class="admitted-sub">ADMITTED</div>
           </div>
@@ -1214,26 +1225,6 @@ function editNickname(ticketId) {
     }
   }
 
-  checkAdmittedStatus();
-  setInterval(checkAdmittedStatus, 5000);
-
-  function updateDownloadSection() {
-    const section = document.getElementById('downloadSection');
-    if (!section) return;
-    if (tickets.length === 0) { section.innerHTML = ''; return; }
-    section.innerHTML = `
-      <button onclick="downloadAllTickets()" style="
-        width:100%;padding:0.875rem;
-        background:linear-gradient(135deg,rgba(12,192,223,0.25) 0%,rgba(30,171,249,0.2) 100%);
-        border:2px solid rgba(12,192,223,0.6);border-radius:10px;
-        color:rgba(12,192,223,0.95);font-family:'Noto Serif JP',serif;
-        font-size:0.85rem;font-weight:700;cursor:pointer;letter-spacing:0.1em;
-        margin-bottom:0.75rem;transition:all 0.3s ease;display:block;
-      " onmouseover="this.style.background='rgba(12,192,223,0.35)';this.style.boxShadow='0 4px 15px rgba(12,192,223,0.4)'"
-         onmouseout="this.style.background='linear-gradient(135deg,rgba(12,192,223,0.25) 0%,rgba(30,171,249,0.2) 100%)';this.style.boxShadow='none'">
-        ⬇ すべてのチケットを画像で保存 (${tickets.length}枚)
-      </button>`;
-  }
 
   async function downloadTicketById(ticketId) {
     const el = document.getElementById('ticket-el-' + ticketId);
