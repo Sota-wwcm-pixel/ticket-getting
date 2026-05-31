@@ -1499,9 +1499,7 @@ async function saveTicketAsImage(ticketId) {
 document.addEventListener('DOMContentLoaded', function () {
 
   // localStorageから保存済みチケット取得
-  const tickets = JSON.parse(
-    localStorage.getItem('tickets') || '[]'
-  );
+  const tickets = JSON.parse(localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
 
   // チケットが1枚以上ある場合
   if (tickets.length > 0) {
