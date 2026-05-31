@@ -1498,36 +1498,6 @@ async function saveTicketAsImage(ticketId) {
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
 
-  // localStorageから保存済みチケット取得
-  const tickets = JSON.parse(localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
-
-  // チケットが1枚以上ある場合
-  if (tickets.length > 0) {
-
-    // チケット画面
-    const ticketWrap =
-      document.querySelector('.ticket-wrap');
-
-    // 発券フォーム画面
-    const formCard =
-      document.querySelector('.card');
-
-    // チケット画面を表示
-    if (ticketWrap) {
-      ticketWrap.classList.add('visible');
-      ticketWrap.style.display = 'block';
-    }
-
-    // 発券フォームを非表示
-    if (formCard) {
-      formCard.style.display = 'none';
-    }
-  }
-});
-</script>
 </body>
 </html>
