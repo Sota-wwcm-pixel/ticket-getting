@@ -1495,6 +1495,37 @@ async function saveTicketAsImage(ticketId) {
   link.click();
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+  // localStorageから保存済みチケット取得
+  const savedTickets = JSON.parse(
+    localStorage.getItem('tickets') || '[]'
+  );
+
+  // チケットが1枚以上ある場合
+  if (savedTickets.length > 0) {
+
+    // チケット画面
+    const ticketWrap =
+      document.querySelector('.ticket-wrap');
+
+    // 発券フォーム画面
+    const formCard =
+      document.querySelector('.card');
+
+    // チケット画面を表示
+    if (ticketWrap) {
+      ticketWrap.classList.add('visible');
+      ticketWrap.style.display = 'block';
+    }
+
+    // 発券フォームを非表示
+    if (formCard) {
+      formCard.style.display = 'none';
+    }
+  }
+});
+</script>
 </body>
 </html>
