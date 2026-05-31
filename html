@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>What we call Magic!</title>
+
+<style>
+:root{
+    --blue:#4d9fd8;
+    --deep-blue:#2d74a8;
+    --beige:#f5ead9;
+    --card:#fffdf9;
+    --text:#2c3a4a;
+    --shadow:0 8px 24px rgba(0,0,0,0.12);
+    --radius:28px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body{
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Hiragino Sans",
+        "Yu Gothic",
+        sans-serif;
+    background: var(--beige);
+    color: var(--text);
+    overflow:hidden;
+}
+
+/* ---------------- Splash ---------------- */
+
+#splash{
+    position:fixed;
+    inset:0;
+    background:
+        linear-gradient(
+            180deg,
+            var(--blue) 0%,
+            #7fc4ee 45%,
+            var(--beige) 100%
+        );
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    transition:opacity .9s ease, visibility .9s ease;
+}
+
+#splash.hide{
+    opacity:0;
+    visibility:hidden;
+}
+
+.logo-wrap{
+    text-align:center;
+    animation: logoAnim 2.3s ease forwards;
+}
+
+.logo{
+    width:270px;
+    max-width:72vw;
+    filter: drop-shadow(0 12px 18px rgba(0,0,0,.18));
+}
+
+.loading-text{
+    margin-top:18px;
+    color:white;
+    font-size:14px;
+    letter-spacing:0.08em;
+    opacity:.95;
+}
+
+@keyframes logoAnim{
+    0%{
+        opacity:0;
+        transform:scale(.92);
+    }
+    35%{
+        opacity:1;
+    }
+    100%{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+/* ---------------- Home ---------------- */
+
+#app{
+    opacity:0;
+    transition:opacity .9s ease;
+    min-height:100vh;
+    position:relative;
+}
+
+#app.show{
+    opacity:1;
+}
+
+.hero{
+    position:relative;
+    height:260px;
+    overflow:hidden;
+    background:
+        linear-gradient(
+            180deg,
+            var(--blue),
+            #7bc3ee
+        );
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+    padding:
+        calc(env(safe-area-inset-top) + 32px)
+        24px
+        0;
+}
+
+.hero-logo{
+    width:210px;
+}
+
+.hero-sub{
+    margin-top:12px;
+    color:white;
+    font-weight:600;
+    letter-spacing:.05em;
+    font-size:15px;
+}
+
+.wave{
+    position:absolute;
+    bottom:-2px;
+    left:0;
+    width:100%;
+}
+
+.content{
+    margin-top:-26px;
+    position:relative;
+    z-index:10;
+    padding:0 18px 120px;
+}
+
+.card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:var(--shadow);
+    margin-bottom:18px;
+}
+
+.card h2{
+    font-size:20px;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#64748b;
+    line-height:1.6;
+}
+
+.section-title{
+    margin:22px 6px 12px;
+    font-size:20px;
+    font-weight:700;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+}
+
+.feature-card{
+    background:white;
+    border-radius:24px;
+    padding:20px 16px;
+    box-shadow:var(--shadow);
+    min-height:120px;
+    transition:.2s;
+    cursor:pointer;
+}
+
+.feature-card:active{
+    transform:scale(.97);
+}
+
+.icon{
+    font-size:32px;
+    margin-bottom:12px;
+}
+
+.feature-title{
+    font-weight:700;
+    margin-bottom:6px;
+}
+
+.feature-desc{
+    font-size:13px;
+    color:#64748b;
+    line-height:1.4;
+}
+
+/* Bottom Nav */
+
+.bottom-nav{
+    position:fixed;
+    left:16px;
+    right:16px;
+    bottom:20px;
+    background:rgba(255,255,255,.92);
+    backdrop-filter: blur(18px);
+    border-radius:999px;
+    box-shadow:0 10px 28px rgba(0,0,0,.14);
+    display:flex;
+    justify-content:space-around;
+    padding:14px 10px;
+    z-index:100;
+}
+
+.nav-item{
+    text-align:center;
+    font-size:12px;
+    color:#64748b;
+}
+
+.nav-icon{
+    font-size:22px;
+    display:block;
+    margin-bottom:4px;
+}
+
+.active{
+    color:var(--deep-blue);
+    font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Splash -->
+<section id="splash">
+    <div class="logo-wrap">
+        <img
+            src="wwcm-logo.png"
+            alt="What we call Magic!"
+            class="logo"
+        />
+        <div class="loading-text">
+            What we call Magic!
+        </div>
+    </div>
+</section>
+
+<!-- Home -->
+<div id="app">
+
+    <header class="hero">
+
+        <div class="hero-content">
+            <img
+                src="wwcm-logo.png"
+                alt="logo"
+                class="hero-logo"
+            />
+
+            <div class="hero-sub">
+                本郷祭アプリ
+            </div>
+        </div>
+
+        <svg
+            class="wave"
+            viewBox="0 0 1440 320"
+            preserveAspectRatio="none"
+        >
+            <path
+                fill="#f5ead9"
+                d="M0,128L60,149.3C120,171,240,213,360,224C480,235,600,213,720,181.3C840,149,960,107,1080,106.7C1200,107,1320,149,1380,170.7L1440,192L1440,320L0,320Z">
+            </path>
+        </svg>
+    </header>
+
+    <main class="content">
+
+        <div class="card">
+            <h2>次の予定</h2>
+            <p>
+                まだ予約はありません。<br>
+                公演やイベントを予約してみよう！
+            </p>
+        </div>
+
+        <div class="section-title">
+            Explore
+        </div>
+
+        <div class="grid">
+
+            <div class="feature-card">
+                <div class="icon">🎟️</div>
+                <div class="feature-title">
+                    チケット
+                </div>
+                <div class="feature-desc">
+                    チケット情報を確認
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🎭</div>
+                <div class="feature-title">
+                    イベント予約
+                </div>
+                <div class="feature-desc">
+                    公演・展示を予約
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🗺️</div>
+                <div class="feature-title">
+                    場内マップ
+                </div>
+                <div class="feature-desc">
+                    校内を探索しよう
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">⭐</div>
+                <div class="feature-title">
+                    お気に入り
+                </div>
+                <div class="feature-desc">
+                    いいねした展示
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">📍</div>
+                <div class="feature-title">
+                    スタンプラリー
+                </div>
+                <div class="feature-desc">
+                    QRを集めて制覇
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">✨</div>
+                <div class="feature-title">
+                    全トゥル体験
+                </div>
+                <div class="feature-desc">
+                    ストーリーを進めよう
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+
+        <div class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            Home
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">🗺️</span>
+            Map
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">🎟️</span>
+            Ticket
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">⭐</span>
+            Saved
+        </div>
+
+        <div class="nav-item">
+            <span class="nav-icon">👤</span>
+            My
+        </div>
+
+    </nav>
+</div>
+
+<script>
+window.addEventListener("load", () => {
+
+    setTimeout(() => {
+        document
+            .getElementById("splash")
+            .classList.add("hide");
+
+        document
+            .getElementById("app")
+            .classList.add("show");
+
+        document.body.style.overflow = "auto";
+    }, 2500);
+
+});
+</script>
+
+</body>
+</html>
