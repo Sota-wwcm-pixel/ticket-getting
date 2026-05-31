@@ -1085,20 +1085,24 @@ opacity:0.9;
     child:  { label: '小人', icon: '⚽️', badgeClass: 'badge-child' },
   };
 
-  // ページ読み込み時に保存済みチケットを復元
-  window.addEventListener('load', () => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        tickets = JSON.parse(saved);
-        if (tickets.length > 0) {
-          // 自動的に表示しない - フォームを表示したまま
-        }
+// ページ読み込み時に保存済みチケットを復元
+window.addEventListener('load', () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      tickets = JSON.parse(saved);
+
+      // チケットがあるなら自動表示
+      if (tickets.length > 0) {
+        displayTickets();
       }
-    } catch(e) { 
-      localStorage.removeItem(STORAGE_KEY);
     }
-  });
+
+  } catch(e) {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+});
 
   function changeCount(type, delta) {
     counts[type] = Math.max(0, Math.min(10, counts[type] + delta));
