@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+/>
+
+<title>場内マップ</title>
+
+<style>
+:root{
+    --blue:#4E88BC;
+    --beige:#F6EEE4;
+    --card:rgba(255,255,255,.86);
+    --text:#314255;
+    --shadow:0 12px 30px rgba(50,70,90,.18);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Hiragino Sans",
+        sans-serif;
+
+    background:
+        linear-gradient(
+            180deg,
+            #dcecf9,
+            #f7efe5
+        );
+
+    color:var(--text);
+}
+
+/* Header */
+
+.header{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:50;
+
+    padding:
+        calc(env(safe-area-inset-top) + 18px)
+        20px
+        18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(78,136,188,.94),
+            rgba(78,136,188,.72)
+        );
+
+    backdrop-filter:blur(20px);
+}
+
+.title{
+    color:white;
+    font-size:22px;
+    font-weight:700;
+}
+
+/* Map */
+
+.map-wrapper{
+    position:fixed;
+    inset:0;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+}
+
+.map-container{
+    position:relative;
+    width:1000px;
+    min-height:1300px;
+    padding-top:90px;
+}
+
+.map-image{
+    width:100%;
+    display:block;
+}
+
+/* Pins */
+
+.pin{
+    position:absolute;
+
+    width:54px;
+    height:54px;
+
+    border:none;
+    border-radius:999px;
+
+    background:white;
+    box-shadow:var(--shadow);
+
+    font-size:24px;
+    cursor:pointer;
+
+    transform:translate(-50%,-50%);
+}
+
+.pin:active{
+    transform:
+        translate(-50%,-50%)
+        scale(.94);
+}
+
+/* Bottom Sheet */
+
+.sheet{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:-420px;
+
+    background:var(--card);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:32px 32px 0 0;
+
+    padding:26px 24px 42px;
+
+    transition:.35s ease;
+    z-index:100;
+
+    box-shadow:
+        0 -12px 30px rgba(0,0,0,.12);
+}
+
+.sheet.show{
+    bottom:0;
+}
+
+.sheet-handle{
+    width:48px;
+    height:5px;
+    border-radius:999px;
+    background:#d0d7df;
+    margin:0 auto 20px;
+}
+
+.sheet-title{
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.meta{
+    color:#6b7a89;
+    line-height:1.8;
+}
+
+.buttons{
+    display:flex;
+    gap:12px;
+    margin-top:24px;
+}
+
+.btn{
+    flex:1;
+    border:none;
+    border-radius:20px;
+    padding:18px;
+
+    font-size:16px;
+    font-weight:700;
+}
+
+.primary{
+    background:var(--blue);
+    color:white;
+}
+
+.secondary{
+    background:#edf4fa;
+    color:var(--blue);
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="title">
+        場内マップ
+    </div>
+</header>
+
+<div class="map-wrapper">
+
+    <div class="map-container">
+
+        <img
+            src="school-map.png"
+            class="map-image"
+        >
+
+        <!-- 演劇 -->
+        <button
+            class="pin"
+            style="left:62%; top:33%;"
+            onclick="openSpot(
+                '演劇部公演',
+                '体育館',
+                '次回 13:00 / 待ち 5分'
+            )"
+        >
+            🎭
+        </button>
+
+        <!-- 軽音 -->
+        <button
+            class="pin"
+            style="left:38%; top:58%;"
+            onclick="openSpot(
+                '軽音ライブ',
+                '講堂',
+                '次回 14:20'
+            )"
+        >
+            🎵
+        </button>
+
+        <!-- D研究会 -->
+        <button
+            class="pin"
+            style="left:73%; top:51%;"
+            onclick="openSpot(
+                'D研究会展示',
+                '3F展示室',
+                '高評価 ★4.9'
+            )"
+        >
+            ✨
+        </button>
+
+    </div>
+
+</div>
+
+<div id="sheet" class="sheet">
+
+    <div class="sheet-handle"></div>
+
+    <div
+        id="sheetTitle"
+        class="sheet-title"
+    >
+        タイトル
+    </div>
+
+    <div
+        id="sheetMeta"
+        class="meta"
+    ></div>
+
+    <div class="buttons">
+
+        <button class="btn secondary">
+            詳細
+        </button>
+
+        <button class="btn primary">
+            予約する
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+const sheet =
+    document.getElementById("sheet");
+
+function openSpot(
+    title,
+    place,
+    info
+){
+    document.getElementById(
+        "sheetTitle"
+    ).textContent = title;
+
+    document.getElementById(
+        "sheetMeta"
+    ).innerHTML = `
+        場所：${place}<br>
+        ${info}
+    `;
+
+    sheet.classList.add("show");
+}
+
+document.addEventListener(
+    "click",
+    (e)=>{
+        if(
+            !e.target.closest(".sheet")
+            &&
+            !e.target.closest(".pin")
+        ){
+            sheet.classList.remove("show");
+        }
+    }
+);
+</script>
+
+</body>
+</html>
