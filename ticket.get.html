@@ -1445,23 +1445,33 @@ function editNickname(ticketId) {
         height: el.offsetHeight,
         scrollX: 0,
         scrollY: 0,
-        onclone: (doc) => {
-          const style = doc.createElement('style');
-          style.innerHTML = `
-          .ticket-header::after{
-            content:'';
-            position:absolute;
-            bottom:-1px;
-            left:0;
-            right:0;
-            height:40px !important;
-            background: var(--cream) !important;
-            clip-path:path('M 0,10 C 76,-10 231,30 307,10 L 307,40 L 0,40 Z') !important;
-            -webkit-clip-path:path('M 0,10 C 76,-10 231,30 307,10 L 307,40 L 0,40 Z') !important;
-            display:block !important;
-          }`;
-          doc.head.appendChild(style);
-        }
+       onclone: (doc) => {
+  const style = doc.createElement('style');
+
+  style.innerHTML = `
+    .ticket-header{
+      position: relative !important;
+      overflow: hidden !important;
+    }
+
+    .ticket-header::after{
+      content:'' !important;
+      position:absolute !important;
+      left:-10% !important;
+      right:-10% !important;
+      bottom:-18px !important;
+      height:48px !important;
+      background: var(--cream) !important;
+
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0 !important;
+
+      transform: scaleX(1.2) !important;
+      display:block !important;
+    }
+  `;
+
+  doc.head.appendChild(style);
+}
       });
       const link = document.createElement('a');
       link.download = 'ticket-' + ticketId + '.png';
