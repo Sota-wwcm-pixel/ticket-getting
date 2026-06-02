@@ -720,60 +720,62 @@
    Bottom Navigation
 ========================= */
 
-.bottom-nav{
-    position:fixed;
+.bottom-nav {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 9999;
 
-    left:14px;
-    right:14px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 
-    bottom:
-        calc(12px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
 
-    z-index:9999;
+  border: 1px solid rgba(255, 255, 255, 0.70);
+  border-radius: var(--radius-full);
+  padding: 10px 6px;
+  box-shadow: var(--shadow-nav);
 
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    background:
-        rgba(255,255,255,.88);
-
-    backdrop-filter:blur(24px);
-    -webkit-backdrop-filter:blur(24px);
-
-    border-radius:999px;
-
-    padding:14px 10px;
-
-    box-shadow:
-        0 10px 35px rgba(0,0,0,.16);
-
-    min-height:74px;
+  min-height: 68px;
 }
 
-.nav-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-
-    text-decoration:none;
-    color:#6d7b88;
-
-    font-size:12px;
-
-    min-width:58px;
-    min-height:52px;
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 56px;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+  transition: color 0.2s, background 0.2s, transform 0.18s var(--ease-bounce);
+  position: relative;
 }
 
-.nav-icon{
-    font-size:22px;
-    margin-bottom:4px;
+.nav-item:hover {
+  background: rgba(116,169,216,0.08);
+  transform: translateY(-2px);
 }
+.nav-item:active { transform: scale(0.90); }
 
-.active{
-    color:#356B9C;
-    font-weight:700;
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 3px;
+  transition: transform 0.18s var(--ease-bounce);
+}
+.nav-item:hover .nav-icon { transform: scale(1.15); }
+
+.nav-item.active {
+  color: var(--deep-blue);
+  font-weight: 700;
 }
  /* visibleクラスがつくと表示 */
 </style>
