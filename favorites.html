@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>お気に入り</title>
+
+<style>
+:root{
+    --blue:#4E88BC;
+    --beige:#F6EEE4;
+    --text:#314255;
+    --shadow:0 12px 30px rgba(50,70,90,.12);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,.75), transparent 35%),
+        linear-gradient(180deg,#edf7ff 0%,#f7efe3 100%);
+    color:var(--text);
+}
+
+.header{
+    padding:
+        calc(env(safe-area-inset-top) + 26px)
+        22px
+        24px;
+    background:
+        linear-gradient(180deg,#4E88BC,#79B5DF);
+    color:white;
+    border-radius:0 0 34px 34px;
+}
+
+.header h1{
+    font-size:28px;
+}
+
+.header p{
+    opacity:.9;
+    margin-top:8px;
+}
+
+.content{
+    padding:20px 18px 120px;
+}
+
+.card{
+    background:rgba(255,255,255,.8);
+    backdrop-filter:blur(18px);
+    border-radius:28px;
+    padding:22px;
+    margin-bottom:16px;
+    box-shadow:var(--shadow);
+}
+
+.category{
+    display:inline-block;
+    background:#edf4fa;
+    color:#4E88BC;
+    border-radius:999px;
+    padding:6px 12px;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+.title{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.desc{
+    color:#667789;
+    line-height:1.7;
+}
+
+.row{
+    margin-top:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.like{
+    font-size:22px;
+}
+
+.button{
+    border:none;
+    background:#4E88BC;
+    color:white;
+    border-radius:16px;
+    padding:12px 18px;
+    font-weight:700;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <h1>⭐ お気に入り</h1>
+    <p>保存した展示・イベント</p>
+</header>
+
+<main class="content">
+
+    <div class="card">
+        <div class="category">展示</div>
+        <div class="title">D研究会展示</div>
+        <div class="desc">
+            テーマパーク演出と世界観の展示。
+        </div>
+
+        <div class="row">
+            <span class="like">⭐ 保存済み</span>
+            <button class="button">
+                詳細を見る
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="category">公演</div>
+        <div class="title">演劇部公演</div>
+        <div class="desc">
+            体育館公演・次回13:00
+        </div>
+
+        <div class="row">
+            <span class="like">⭐ 保存済み</span>
+            <button class="button">
+                予約
+            </button>
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>
