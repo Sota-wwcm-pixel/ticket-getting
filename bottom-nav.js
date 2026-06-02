@@ -1,3 +1,15 @@
+const path = location.pathname;
+
+function active(page){
+
+    return path.includes(page)
+
+        ? "active"
+
+        : "";
+
+}
+
 document.addEventListener(
   "DOMContentLoaded",
   () => {
