@@ -1570,34 +1570,34 @@ async function saveTicketAsImage(ticketId) {
   
 padding-bottom:
     calc(120px + env(safe-area-inset-bottom));
-<nav class="bottom-nav">
+ <nav class="bottom-nav" aria-label="メインナビゲーション">
 
-    <a href="index.html" class="nav-item">
-        <span class="nav-icon">🏠</span>
-        Home
+    <a href="index.html" class="nav-item" data-page="index">
+      <span class="nav-icon" aria-hidden="true">🏠</span>
+      <span>Home</span>
     </a>
 
-    <a href="map.html" class="nav-item">
-        <span class="nav-icon">🗺️</span>
-        Map
+    <a href="map.html" class="nav-item" data-page="map">
+      <span class="nav-icon" aria-hidden="true">🗺️</span>
+      <span>Map</span>
     </a>
 
-    <a href="ticket.get.html" class="nav-item active">
-        <span class="nav-icon">🎟️</span>
-        Ticket
+    <a href="ticket.get.html" class="nav-item" data-page="ticket">
+      <span class="nav-icon" aria-hidden="true">🎟️</span>
+      <span>Ticket</span>
     </a>
 
-    <a href="#" class="nav-item">
-        <span class="nav-icon">⭐</span>
-        Saved
+    <a href="saved.html" class="nav-item" data-page="saved">
+      <span class="nav-icon" aria-hidden="true">⭐</span>
+      <span>Saved</span>
     </a>
 
-    <a href="my.html" class="nav-item">
-        <span class="nav-icon">👤</span>
-        My
+    <a href="my.html" class="nav-item" data-page="my">
+      <span class="nav-icon" aria-hidden="true">👤</span>
+      <span>My</span>
     </a>
 
-</nav>
+  </nav>
           
 </body>
 </html>
