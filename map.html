@@ -64,54 +64,199 @@ html, body {
 
 body {
   font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
-  background: linear-gradient(180deg, #dcecf9, #f7efe5);
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(116, 169, 216, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 10%, rgba(232, 201, 122, 0.10) 0%, transparent 45%),
+    linear-gradient(170deg, #EBF5FF 0%, #F4EDE3 100%);
   color: var(--text);
-}
-
-/* =============================================
-   ヘッダー
-============================================= */
-.header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 50;
-  padding:
-    calc(env(safe-area-inset-top) + 14px)
-    20px
-    14px;
-  background: rgba(78, 136, 188, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: var(--shadow-sm);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.title {
-  color: white;
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  flex-direction: column;
+  height: 100vh;
 }
 
 /* =============================================
-   マップエリア
+   ヘッダー / ヒーロー (他ページとデザイン統一)
 ============================================= */
+.hero {
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.22) 0%, transparent 55%),
+    linear-gradient(155deg, #3A6FA0 0%, #5B90C2 48%, #82BAE0 100%);
+  padding:
+    calc(env(safe-area-inset-top) + 16px)
+    22px
+    54px;
+}
+
+.hero-deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite alternate;
+}
+.hero-circle-1 { width: 140px; height: 140px; top: -20px; right: -20px; }
+.hero-circle-2 { width: 80px; height: 80px; bottom: 10px; left: -20px; animation-delay: -2s; }
+
+@keyframes float {
+  from { transform: translateY(0) scale(1); }
+  to   { transform: translateY(-10px) scale(1.05); }
+}
+
+.logo {
+  width: 120px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+}
+
+.page-title {
+  color: white;
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.wave {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 40px;
+}
+
+/* =============================================
+   コンテンツ & コントロール
+============================================= */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: -24px;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+  padding: 0 12px;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 4px;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.view-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  align-self: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.25s var(--ease-smooth);
+}
+
+.toggle-btn.active {
+  background: white;
+  color: var(--deep-blue);
+  box-shadow: 0 2px 10px rgba(58, 111, 160, 0.15);
+}
+
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+
+.filter-pill {
+  flex-shrink: 0;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.22s var(--ease-smooth);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-pill.active {
+  background: linear-gradient(135deg, var(--mid-blue) 0%, var(--deep-blue) 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(58, 111, 160, 0.25);
+}
+
+/* =============================================
+   ビューセクション & マップ
+============================================= */
+.view-section {
+  display: none;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  border-radius: var(--radius-lg);
+  margin-bottom: calc(76px + env(safe-area-inset-bottom));
+}
+
+.view-section.active {
+  display: flex;
+  flex-direction: column;
+}
+
 .map-wrapper {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  bottom: calc(68px + env(safe-area-inset-bottom) + 10px);
+  flex: 1;
   overflow: auto;
+  position: relative;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
   -webkit-overflow-scrolling: touch;
+}
+
+.zoom-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .map-container {
   position: relative;
   width: 1000px;
-  min-height: 1300px;
-  padding-top: calc(env(safe-area-inset-top) + 70px);
+  height: 1300px;
   background: radial-gradient(circle at center, transparent 30%, rgba(116, 169, 216, 0.08));
 }
 
@@ -120,17 +265,64 @@ body {
   display: block;
 }
 
+/* ズームコントロール */
+.zoom-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 16px;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  box-shadow: var(--shadow-md);
+}
+
+.zoom-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  box-shadow: var(--shadow-sm);
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--deep-blue);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+}
+.zoom-btn:active { transform: scale(0.9); }
+
+.zoom-controls input[type="range"] {
+  -webkit-appearance: slider-vertical;
+  width: 20px;
+  height: 80px;
+  background: transparent;
+  outline: none;
+  margin: 4px 0;
+  cursor: pointer;
+}
+
 /* =============================================
-   マップピン
+   マップピン & ジャンル別カラー
 ============================================= */
 .pin {
   position: absolute;
-  width: 50px; height: 50px;
+  width: 48px; height: 48px;
   border: none;
   border-radius: 50%;
   background: white;
   box-shadow: var(--shadow-md), inset 0 2px 0 rgba(255,255,255,0.9);
-  font-size: 24px;
+  font-size: 22px;
   cursor: pointer;
   transform: translate(-50%, -50%);
   display: flex;
@@ -140,13 +332,12 @@ body {
   z-index: 10;
 }
 
-/* ピンの波紋エフェクト */
 .pin::after {
   content: '';
   position: absolute;
-  inset: -6px;
+  inset: -5px;
   border-radius: 50%;
-  background: rgba(116, 169, 216, 0.22);
+  background: rgba(116, 169, 216, 0.25);
   z-index: -1;
   animation: pulse 1.8s infinite;
 }
@@ -161,10 +352,140 @@ body {
   box-shadow: var(--shadow-lg);
   z-index: 20;
 }
+.pin:active { transform: translate(-50%, -50%) scale(0.94); }
 
-.pin:active {
-  transform: translate(-50%, -50%) scale(0.94);
+/* ジャンル色 */
+.pin.genre-attraction { border: 2.5px solid #C084FC; }
+.pin.genre-talk { border: 2.5px solid #FBBF24; }
+.pin.genre-event { border: 2.5px solid #F87171; }
+.pin.genre-exhibit { border: 2.5px solid #2DD4BF; }
+.pin.genre-other { border: 2.5px solid #94A3B8; }
+
+/* =============================================
+   リストビューのカード & 要素
+============================================= */
+.spot-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 4px 80px;
 }
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 var(--glass-shine);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.22s var(--ease-bounce), box-shadow 0.22s;
+  animation: cardFadeUp 0.4s var(--ease-smooth) both;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-icon-wrap {
+  width: 46px; height: 46px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+.card-icon-wrap.genre-attraction-bg { background: linear-gradient(135deg, #c084fc 0%, #a78bfa 100%); }
+.card-icon-wrap.genre-talk-bg { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+.card-icon-wrap.genre-event-bg { background: linear-gradient(135deg, #f87171 0%, #ef4444 100%); }
+.card-icon-wrap.genre-exhibit-bg { background: linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%); }
+.card-icon-wrap.genre-other-bg { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
+
+.card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title-text {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--text);
+}
+
+.card-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.list-btn {
+  border: none;
+  background: white;
+  border: 1px solid var(--glass-border);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  color: var(--deep-blue);
+  transition: all 0.2s;
+}
+.list-btn:hover {
+  background: var(--light-sky);
+  transform: translateY(-1px);
+}
+
+.card-action-btn {
+  background: transparent;
+  border: none;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s var(--ease-bounce);
+}
+.card-action-btn:hover {
+  background: rgba(58, 111, 160, 0.08);
+  transform: scale(1.1);
+}
+.card-action-btn.active {
+  color: var(--warm-gold);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.empty-icon { font-size: 40px; margin-bottom: 12px; display: block; }
+.empty-text { font-size: 14px; font-weight: 700; color: var(--text-muted); }
 
 /* =============================================
    ボトムシート（詳細モーダル）
@@ -185,7 +506,7 @@ body {
 }
 
 .sheet.show {
-  bottom: calc(68px + env(safe-area-inset-bottom) - 8px); /* ボトムナビの直上に配置 */
+  bottom: calc(68px + env(safe-area-inset-bottom) - 8px);
 }
 
 .sheet-handle {
@@ -213,14 +534,18 @@ body {
 .sheet-emoji {
   width: 46px; height: 46px;
   border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--sky) 0%, var(--blue) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  box-shadow: 0 4px 12px rgba(116, 169, 216, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 }
+.sheet-emoji.genre-attraction-bg { background: linear-gradient(135deg, #c084fc 0%, #a78bfa 100%); }
+.sheet-emoji.genre-talk-bg { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+.sheet-emoji.genre-event-bg { background: linear-gradient(135deg, #f87171 0%, #ef4444 100%); }
+.sheet-emoji.genre-exhibit-bg { background: linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%); }
+.sheet-emoji.genre-other-bg { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
 
 .meta {
   color: var(--text-muted);
@@ -285,9 +610,7 @@ body {
   color: var(--text);
 }
 
-.btn:active {
-  transform: scale(0.96) translateY(0);
-}
+.btn:active { transform: scale(0.96) translateY(0); }
 
 /* トースト通知 */
 .toast {
@@ -390,48 +713,67 @@ body {
 
 <body>
 
-  <header class="header">
-    <div class="title">場内マップ</div>
+  <header class="hero">
+    <div class="hero-deco" aria-hidden="true">
+      <div class="hero-circle hero-circle-1"></div>
+      <div class="hero-circle hero-circle-2"></div>
+    </div>
+    <img src="Whatwecall.svg" alt="What we call Magic!" class="logo" />
+    <h1 class="page-title">Map</h1>
+    
+    <svg class="wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="#EBF5FF" d="M0,60 C240,90 480,30 720,55 C960,80 1200,20 1440,50 L1440,110 L0,110 Z" />
+      <path fill="#F4EDE3" opacity="0.55" d="M0,75 C200,95 440,50 720,68 C1000,86 1240,40 1440,62 L1440,110 L0,110 Z" />
+    </svg>
   </header>
 
   <!-- トースト -->
   <div id="toast" class="toast">お気に入りに追加しました</div>
 
-  <div class="map-wrapper">
-    <div class="map-container">
-      <img src="map.png" class="map-image" alt="校内マップ" />
-
-      <!-- 演劇 -->
-      <button
-        class="pin"
-        style="left:62%; top:33%;"
-        onclick="openSpot('演劇部公演', '体育館', '次回 13:00 / 待ち 5分', '🎭')"
-        aria-label="演劇部公演 (体育館)"
-      >
-        🎭
-      </button>
-
-      <!-- 軽音 -->
-      <button
-        class="pin"
-        style="left:38%; top:58%;"
-        onclick="openSpot('軽音ライブ', '講堂', '次回 14:20 / 入場自由', '🎵')"
-        aria-label="軽音ライブ (講堂)"
-      >
-        🎵
-      </button>
-
-      <!-- D研究会 -->
-      <button
-        class="pin"
-        style="left:73%; top:51%;"
-        onclick="openSpot('D研究会展示', '3F展示室', '終日開催 / 高評価 ★4.9', '✨')"
-        aria-label="D研究会展示 (3F展示室)"
-      >
-        ✨
-      </button>
+  <main class="content">
+    <!-- コントロールパネル -->
+    <div class="control-panel">
+      <div class="view-toggle">
+        <button id="btnMapView" class="toggle-btn active" onclick="setViewMode('map')">🗺️ マップ</button>
+        <button id="btnListView" class="toggle-btn" onclick="setViewMode('list')">📝 リスト</button>
+      </div>
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-pill active" id="pill-all" onclick="filterGenre('all')">🌐 すべて</button>
+        <button class="filter-pill" id="pill-attraction" onclick="filterGenre('attraction')">🤖 アトラクション</button>
+        <button class="filter-pill" id="pill-talk" onclick="filterGenre('talk')">🎭 講演</button>
+        <button class="filter-pill" id="pill-event" onclick="filterGenre('event')">🎵 イベント</button>
+        <button class="filter-pill" id="pill-exhibit" onclick="filterGenre('exhibit')">✨ 展示</button>
+        <button class="filter-pill" id="pill-other" onclick="filterGenre('other')">🧪 その他</button>
+      </div>
     </div>
-  </div>
+
+    <!-- マップビューセクション -->
+    <div id="mapViewContainer" class="view-section active">
+      <!-- ズームコントロール -->
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="adjustZoom(0.1)" aria-label="拡大">＋</button>
+        <input type="range" id="zoomSlider" min="0.5" max="2.0" step="0.1" value="1.0" oninput="setZoom(this.value)" aria-label="ズーム" />
+        <button class="zoom-btn" onclick="adjustZoom(-0.1)" aria-label="縮小">－</button>
+      </div>
+
+      <!-- マップスクロールラッパー -->
+      <div class="map-wrapper" id="mapWrapper">
+        <div class="zoom-container" id="zoomContainer">
+          <div class="map-container" id="mapContainer">
+            <img src="map.png" class="map-image" alt="校内マップ" />
+            <!-- ピンはJavaScriptで動的に生成 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- リストビューセクション -->
+    <div id="listViewContainer" class="view-section">
+      <div id="spotList" class="spot-list">
+        <!-- リスト項目はJavaScriptで動的に生成 -->
+      </div>
+    </div>
+  </main>
 
   <!-- ボトムシート -->
   <div id="sheet" class="sheet">
@@ -484,26 +826,199 @@ body {
   <script>
     const sheet = document.getElementById("sheet");
     const SAVED_KEY = 'wwcm_saved';
-    
-    let currentSpot = null; // 現在展開中のスポットオブジェクト
 
-    function openSpot(title, place, info, emoji) {
-      currentSpot = { name: title, place: place, emoji: emoji };
+    // スポット一覧データ定義
+    const spots = [
+      { id: 'spot_1', name: '演劇部公演', place: '体育館', info: '次回 13:00 / 待ち 5分', emoji: '🎭', genre: 'talk', left: '62%', top: '33%' },
+      { id: 'spot_2', name: '軽音ライブ', place: '講堂', info: '次回 14:20 / 入場自由', emoji: '🎵', genre: 'event', left: '38%', top: '58%' },
+      { id: 'spot_3', name: 'D研究会展示', place: '3F展示室', info: '終日開催 / 高評価 ★4.9', emoji: '✨', genre: 'exhibit', left: '73%', top: '51%' },
+      { id: 'spot_4', name: 'VR脱出ゲーム', place: '多目的ホール', info: '待ち時間 30分 / 要整理券', emoji: '🤖', genre: 'attraction', left: '25%', top: '42%' },
+      { id: 'spot_5', name: 'サイエンスショー', place: '化学実験室', info: '11:00 / 14:00 開催', emoji: '🧪', genre: 'other', left: '50%', top: '22%' }
+    ];
 
-      document.getElementById("sheetTitle").textContent = title;
-      document.getElementById("sheetEmoji").textContent = emoji;
+    let currentSpot = null;
+    let activeGenre = 'all';
+    let viewMode = 'map';
+    let currentZoom = 1.0;
+    const minZoom = 0.5;
+    const maxZoom = 2.0;
+
+    // 初期起動時の描画
+    function init() {
+      renderPins();
+      renderList();
+      setZoom(1.0);
+      setActiveNav();
+    }
+
+    // 表示切り替え
+    window.setViewMode = function(mode) {
+      viewMode = mode;
+      document.getElementById('btnMapView').classList.toggle('active', mode === 'map');
+      document.getElementById('btnListView').classList.toggle('active', mode === 'list');
+      
+      document.getElementById('mapViewContainer').classList.toggle('active', mode === 'map');
+      document.getElementById('listViewContainer').classList.toggle('active', mode === 'list');
+
+      sheet.classList.remove("show"); // ビュー切替時はシートを閉じる
+      
+      if (mode === 'list') {
+        renderList();
+      }
+    };
+
+    // ジャンルフィルター切り替え
+    window.filterGenre = function(genre) {
+      activeGenre = genre;
+      const pills = document.querySelectorAll('.filter-pill');
+      pills.forEach(pill => {
+        pill.classList.toggle('active', pill.id === `pill-${genre}`);
+      });
+
+      renderPins();
+      if (viewMode === 'list') {
+        renderList();
+      }
+    };
+
+    // ズーム制御
+    window.adjustZoom = function(amount) {
+      setZoom(currentZoom + amount);
+    };
+
+    window.setZoom = function(zoomValue) {
+      currentZoom = Math.max(minZoom, Math.min(maxZoom, parseFloat(zoomValue)));
+      document.getElementById('zoomSlider').value = currentZoom;
+      
+      const zoomContainer = document.getElementById('zoomContainer');
+      const mapContainer = document.getElementById('mapContainer');
+      
+      zoomContainer.style.width = (1000 * currentZoom) + 'px';
+      zoomContainer.style.height = (1300 * currentZoom) + 'px';
+      mapContainer.style.transform = `scale(${currentZoom})`;
+    };
+
+    // ピンを動的に描画
+    function renderPins() {
+      const mapContainer = document.getElementById('mapContainer');
+      // 既存のピンを削除
+      const existingPins = mapContainer.querySelectorAll('.pin');
+      existingPins.forEach(pin => pin.remove());
+
+      spots.forEach(spot => {
+        if (activeGenre !== 'all' && spot.genre !== activeGenre) return;
+
+        const btn = document.createElement('button');
+        btn.className = `pin genre-${spot.genre}`;
+        btn.style.left = spot.left;
+        btn.style.top = spot.top;
+        btn.innerHTML = spot.emoji;
+        btn.setAttribute('aria-label', `${spot.name} (${spot.place})`);
+        
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          openSpot(spot);
+        };
+
+        mapContainer.appendChild(btn);
+      });
+    }
+
+    // リストビューを描画
+    function renderList() {
+      const listContainer = document.getElementById('spotList');
+      listContainer.innerHTML = '';
+
+      const filtered = spots.filter(spot => activeGenre === 'all' || spot.genre === activeGenre);
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">🔍</span>
+            <div class="empty-text">該当する企画はありません</div>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((spot, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.animationDelay = `${index * 0.05}s`;
+
+        let saved = [];
+        try {
+          saved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+        } catch(e) {}
+        const isFavorited = saved.some(item => item.name === spot.name);
+
+        card.innerHTML = `
+          <div class="card-icon-wrap genre-${spot.genre}-bg" aria-hidden="true">${spot.emoji}</div>
+          <div class="card-info">
+            <div class="card-title-text">${spot.name}</div>
+            <div class="card-subtitle">${spot.place} • ${spot.info}</div>
+          </div>
+          <div class="card-actions">
+            <button class="list-btn" onclick="focusOnMap('${spot.id}')">
+              🗺️ マップ
+            </button>
+            <button class="card-action-btn ${isFavorited ? 'active' : ''}" onclick="toggleFavoriteSpot('${spot.id}')" aria-label="お気に入り登録">
+              ★
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    // リストからマップへのフォーカス遷移
+    window.focusOnMap = function(spotId) {
+      const spot = spots.find(s => s.id === spotId);
+      if (!spot) return;
+
+      setViewMode('map');
+
+      setTimeout(() => {
+        const mapWrapper = document.getElementById('mapWrapper');
+        const leftPct = parseFloat(spot.left);
+        const topPct = parseFloat(spot.top);
+
+        const spotX = (leftPct / 100) * 1000 * currentZoom;
+        const spotY = (topPct / 100) * 1300 * currentZoom;
+
+        const scrollX = spotX - (mapWrapper.clientWidth / 2);
+        const scrollY = spotY - (mapWrapper.clientHeight / 2);
+
+        mapWrapper.scrollTo({
+          left: scrollX,
+          top: scrollY,
+          behavior: 'smooth'
+        });
+
+        openSpot(spot);
+      }, 300);
+    };
+
+    // ボトムシートを開く
+    function openSpot(spot) {
+      currentSpot = spot;
+
+      document.getElementById("sheetTitle").textContent = spot.name;
+      
+      const emojiDiv = document.getElementById("sheetEmoji");
+      emojiDiv.className = `sheet-emoji genre-${spot.genre}-bg`;
+      emojiDiv.textContent = spot.emoji;
+
       document.getElementById("sheetMeta").innerHTML = `
-        場所：${place}<br>
-        情報：${info}
+        場所：${spot.place}<br>
+        情報：${spot.info}
       `;
 
-      // お気に入り状態のチェック
       updateFavoriteButtonState();
-
       sheet.classList.add("show");
     }
 
-    // お気に入りボタンの文字・アクティブクラス更新
+    // お気に入り状態のチェックとボタン表示更新
     function updateFavoriteButtonState() {
       const btn = document.getElementById('favoriteBtn');
       if (!currentSpot) return;
@@ -524,41 +1039,54 @@ body {
       }
     }
 
-    // お気に入り登録のトグル処理
-    window.toggleFavorite = function() {
-      if (!currentSpot) return;
+    // お気に入りトグル処理 (ID基準)
+    window.toggleFavoriteSpot = function(spotId) {
+      const spot = spots.find(s => s.id === spotId);
+      if (!spot) return;
 
       let saved = [];
       try {
         saved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
       } catch (e) {}
 
-      const index = saved.findIndex(item => item.name === currentSpot.name);
+      const index = saved.findIndex(item => item.name === spot.name);
       const toast = document.getElementById('toast');
 
       if (index > -1) {
-        // すでに保存されていたら削除
         saved.splice(index, 1);
         toast.textContent = 'お気に入りから削除しました';
       } else {
-        // なければ追加
-        saved.push(currentSpot);
+        saved.push({ name: spot.name, place: spot.place, emoji: spot.emoji });
         toast.textContent = 'お気に入りに追加しました！';
       }
 
       localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
-      updateFavoriteButtonState();
+      
+      // 表示状態更新
+      if (currentSpot && currentSpot.id === spotId) {
+        updateFavoriteButtonState();
+      }
+      if (viewMode === 'list') {
+        renderList();
+      }
 
-      // トースト通知を表示
+      // トースト表示
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
       }, 2000);
     };
 
+    // ボトムシート側のお気に入りトグル
+    window.toggleFavorite = function() {
+      if (currentSpot) {
+        toggleFavoriteSpot(currentSpot.id);
+      }
+    };
+
     // ボトムシートの外側をクリックしたら閉じる
     document.addEventListener("click", (e) => {
-      if (!e.target.closest(".sheet") && !e.target.closest(".pin")) {
+      if (!e.target.closest(".sheet") && !e.target.closest(".pin") && !e.target.closest(".list-btn") && !e.target.closest(".card-action-btn")) {
         sheet.classList.remove("show");
       }
     });
@@ -584,7 +1112,8 @@ body {
       });
     }
 
-    setActiveNav();
+    // 初期化実行
+    init();
   </script>
 </body>
 </html>
