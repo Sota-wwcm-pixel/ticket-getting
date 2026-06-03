@@ -744,6 +744,12 @@ body::before {
       list.innerHTML = '';
       selectedTicketId = null; // リセット
 
+      // メインチケットの取得
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem('wwcm_user') || '{}');
+      } catch(e) {}
+
       tickets.forEach(ticket => {
         const typeMap = { adult: '大人', middle: '中人', child: '小人' };
         const label = typeMap[ticket.type] || 'チケット';
@@ -755,6 +761,16 @@ body::before {
           <div class="ticket-type">${label}</div>
           <div class="ticket-id">${ticket.id}</div>
         `;
+        
+        // メインチケットを自動選択、無ければ最初のチケットを選択
+        if (user.primaryTicketId === ticket.id) {
+          card.classList.add('active');
+          selectedTicketId = ticket.id;
+        } else if (!user.primaryTicketId && !selectedTicketId) {
+          card.classList.add('active');
+          selectedTicketId = ticket.id;
+        }
+
         list.appendChild(card);
       });
 
@@ -786,7 +802,27 @@ body::before {
         return;
       }
 
+      let current = [];
+      try {
+        current = JSON.parse(localStorage.getItem(RESERVATION_KEY) || '[]');
+      } catch (e) {}
+
+      // 重複予約の防止
+      const isDuplicate = current.some(res => res.eventId === selectedEvent.id && res.ticketId === selectedTicketId);
+      if (isDuplicate) {
+        alert('このチケットは既にこのイベントを予約済みです。別のチケットを選択するか、マイページで予約状況をご確認ください。');
+        return;
+      }
+
       const reservationId = generateReservationId();
+      
+      // ユーザー情報の取得
+      let user = { name: 'ゲスト', email: '' };
+      try {
+        const stored = localStorage.getItem('wwcm_user');
+        if (stored) user = JSON.parse(stored);
+      } catch (e) {}
+
       const reservation = {
         reservationId,
         eventId: selectedEvent.id,
@@ -797,23 +833,30 @@ body::before {
         reservedAt: new Date().toISOString()
       };
 
-      let current = [];
-      try {
-        current = JSON.parse(localStorage.getItem(RESERVATION_KEY) || '[]');
-      } catch (e) {}
-
       current.push(reservation);
       localStorage.setItem(RESERVATION_KEY, JSON.stringify(current));
 
-      // GASへの同期送信
+      // GASへの非同期送信 (アクション reserve)
       try {
-        if (GAS_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
-          await fetch(GAS_URL, {
+        if (GAS_URL && GAS_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL' && GAS_URL.startsWith('http')) {
+          const payload = {
+            action: 'reserve',
+            reservationId: reservation.reservationId,
+            eventId: reservation.eventId,
+            eventTitle: reservation.eventTitle,
+            eventDate: reservation.eventDate,
+            eventTime: reservation.eventTime,
+            ticketId: reservation.ticketId,
+            userName: user.name || 'ゲスト',
+            email: user.email || ''
+          };
+
+          fetch(GAS_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(reservation)
-          });
+            body: JSON.stringify(payload)
+          }).catch(err => console.warn('GAS fetch background error:', err));
         }
       } catch (error) {
         console.warn('GAS sync warning:', error);
@@ -823,6 +866,60 @@ body::before {
       document.getElementById('reservationNumber').textContent = reservationId;
 
       showPage('completePage');
+    };
+
+    // 予約キャンセル処理
+    window.cancelReservation = async function(reservationId) {
+      if (!confirm('本当にこの予約をキャンセルしますか？')) {
+        return;
+      }
+
+      let reservations = [];
+      try {
+        reservations = JSON.parse(localStorage.getItem(RESERVATION_KEY) || '[]');
+      } catch (e) {}
+
+      const resToCancel = reservations.find(r => r.reservationId === reservationId);
+      if (!resToCancel) return;
+
+      reservations = reservations.filter(r => r.reservationId !== reservationId);
+      localStorage.setItem(RESERVATION_KEY, JSON.stringify(reservations));
+
+      // ユーザー情報の取得
+      let user = { name: 'ゲスト', email: '' };
+      try {
+        const stored = localStorage.getItem('wwcm_user');
+        if (stored) user = JSON.parse(stored);
+      } catch (e) {}
+
+      // GASへの非同期送信 (アクション cancel)
+      try {
+        if (GAS_URL && GAS_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL' && GAS_URL.startsWith('http')) {
+          const payload = {
+            action: 'cancel',
+            reservationId: resToCancel.reservationId,
+            eventId: resToCancel.eventId,
+            eventTitle: resToCancel.eventTitle,
+            eventDate: resToCancel.eventDate,
+            eventTime: resToCancel.eventTime,
+            ticketId: resToCancel.ticketId,
+            userName: user.name || 'ゲスト',
+            email: user.email || ''
+          };
+
+          fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).catch(err => console.warn('GAS fetch background error:', err));
+        }
+      } catch (error) {
+        console.warn('GAS sync warning:', error);
+      }
+
+      alert('予約をキャンセルしました。');
+      openReservationsPage();
     };
 
     // 予約済みリスト表示
@@ -849,11 +946,29 @@ body::before {
         card.className = 'reservation-card';
         card.innerHTML = `
           <div class="reservation-title">${item.eventTitle}</div>
-          <div class="small">
+          <div class="small" style="margin-bottom: 12px;">
             日時: <span>${item.eventDate} ${item.eventTime}</span><br>
             チケット番号: <span>${item.ticketId}</span><br>
             予約管理番号: <span>${item.reservationId}</span>
           </div>
+          <button class="cancel-btn" onclick="cancelReservation('${item.reservationId}')" style="
+            background: rgba(255, 74, 74, 0.12);
+            color: #ff4d4d;
+            border: 1px solid rgba(255, 74, 74, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 8px 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 4px;
+          ">
+            ✕ この予約をキャンセルする
+          </button>
         `;
         list.appendChild(card);
       });
@@ -881,6 +996,14 @@ body::before {
         }
       });
     }
+
+    // URLパラメータのチェック（一覧表示対応）
+    window.addEventListener('load', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('view') === 'list') {
+        openReservationsPage();
+      }
+    });
 
     renderEvents();
     setActiveNav();
