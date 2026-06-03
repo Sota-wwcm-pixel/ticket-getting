@@ -13,30 +13,29 @@
 
 <style>
 /* =============================================
-   デザイントークン (ダーク/マジック)
+   デザイントークン (ライト/ウォーム)
 ============================================= */
 :root {
-  --dark-navy:    #0a1628;
-  --deep-blue:    #0d2247;
-  --primary-blue: #004aad;
-  --bright-cyan:  #0cc0df;
-  --light-cyan:   #1eabf9;
-  --accent-purple:#5251c2;
-  --accent-green: #17fd48;
-  --accent-pink:  #e05a73;
+  --blue:       #74A9D8;
+  --deep-blue:  #3A6FA0;
+  --mid-blue:   #5B90C2;
+  --sky:        #A9D2F3;
+  --light-sky:  #D6EDFB;
+  --beige:      #F6EEE4;
+  --cream:      #FFF9F2;
+  --warm-gold:  #E8C97A;
+  --text:         #243447;
+  --text-muted:   #6B7C93;
+  --text-light:   #94A8BC;
 
-  --glass-bg:     rgba(13, 34, 71, 0.65);
-  --glass-border: rgba(12, 192, 223, 0.25);
-  --glass-shine:  rgba(255, 255, 255, 0.05);
+  --glass-bg:     rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-shine:  rgba(255, 255, 255, 0.90);
 
-  --text:         #f8f4ee;
-  --text-muted:   rgba(248, 244, 238, 0.65);
-  --text-light:   rgba(248, 244, 238, 0.45);
-
-  --shadow-sm:  0 4px 16px rgba(0, 74, 173, 0.15);
-  --shadow-md:  0 8px 32px rgba(0, 74, 173, 0.25);
-  --shadow-lg:  0 16px 48px rgba(0, 0, 0, 0.45);
-  --shadow-nav: 0 -4px 24px rgba(0, 74, 173, 0.18), 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-sm:  0 4px 16px rgba(58, 111, 160, 0.10);
+  --shadow-md:  0 8px 32px rgba(58, 111, 160, 0.14);
+  --shadow-lg:  0 16px 48px rgba(58, 111, 160, 0.20);
+  --shadow-nav: 0 -4px 24px rgba(58, 111, 160, 0.12), 0 8px 32px rgba(0, 0, 0, 0.14);
 
   --radius-sm:  16px;
   --radius-md:  24px;
@@ -58,25 +57,14 @@
 }
 
 body {
-  background: var(--dark-navy);
+  font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
   color: var(--text);
-  font-family: 'Noto Sans JP', sans-serif;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(116, 169, 216, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 10%, rgba(232, 201, 122, 0.10) 0%, transparent 45%),
+    linear-gradient(170deg, #EBF5FF 0%, #F4EDE3 100%);
   min-height: 100vh;
   overflow-x: hidden;
-}
-
-/* 星空背景 */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    radial-gradient(1px 1px at 15% 25%, rgba(12,192,223,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 85% 15%, rgba(30,171,249,0.3) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 45% 65%, rgba(255,255,255,0.2) 0%, transparent 100%),
-    radial-gradient(1.2px 1.2px at 75% 85%, rgba(224,90,115,0.3) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
 }
 
 .app { 
@@ -120,7 +108,7 @@ body::before {
     16px
     12px;
   border-bottom: 1px solid var(--glass-border);
-  background: rgba(10, 22, 40, 0.7);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   flex-shrink: 0;
@@ -129,7 +117,7 @@ body::before {
 .nav-back, .nav-close {
   background: none;
   border: none;
-  color: var(--bright-cyan);
+  color: var(--deep-blue);
   font-size: 20px;
   cursor: pointer;
   padding: 4px 8px;
@@ -151,7 +139,7 @@ body::before {
 
 .nav-right {
   font-size: 12px;
-  color: var(--bright-cyan);
+  color: var(--deep-blue);
   min-width: 56px;
   text-align: right;
   cursor: pointer;
@@ -162,7 +150,7 @@ body::before {
   display: flex;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
-  background: rgba(10, 22, 40, 0.4);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .tab {
@@ -170,14 +158,14 @@ body::before {
   text-align: center;
   padding: 13px 0;
   font-size: 13px;
-  color: var(--text-light);
+  color: var(--text-muted);
   cursor: pointer;
   transition: color 0.2s;
 }
 
 .tab.active {
-  color: var(--accent-pink);
-  border-bottom: 3px solid var(--accent-pink);
+  color: var(--deep-blue);
+  border-bottom: 3px solid var(--deep-blue);
   font-weight: 700;
 }
 
@@ -192,8 +180,8 @@ body::before {
 
 .btn-blue {
   width: 100%;
-  background: linear-gradient(135deg, var(--bright-cyan) 0%, var(--light-cyan) 100%);
-  color: var(--dark-navy);
+  background: linear-gradient(135deg, var(--mid-blue) 0%, var(--deep-blue) 100%);
+  color: white;
   border: none;
   border-radius: var(--radius-md);
   padding: 16px;
@@ -201,20 +189,20 @@ body::before {
   font-weight: 700;
   cursor: pointer;
   letter-spacing: 0.04em;
-  box-shadow: 0 4px 15px rgba(12, 192, 223, 0.25);
+  box-shadow: 0 4px 15px rgba(58, 111, 160, 0.2);
   transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s;
 }
 
 .btn-blue:disabled {
-  background: rgba(12, 192, 223, 0.2);
-  color: rgba(255, 255, 255, 0.3);
+  background: rgba(58, 111, 160, 0.2);
+  color: rgba(255, 255, 255, 0.4);
   box-shadow: none;
   cursor: not-allowed;
 }
 
 .btn-blue:not(:disabled):hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(12, 192, 223, 0.4);
+  box-shadow: 0 6px 20px rgba(58, 111, 160, 0.3);
 }
 
 .btn-blue:not(:disabled):active {
@@ -223,8 +211,8 @@ body::before {
 
 .btn-outline-blue {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--bright-cyan);
+  background: white;
+  color: var(--deep-blue);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   padding: 14px;
@@ -232,11 +220,13 @@ body::before {
   font-weight: 700;
   cursor: pointer;
   margin-top: 10px;
-  transition: background 0.2s;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
 }
 
 .btn-outline-blue:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(116, 169, 216, 0.1);
+  transform: translateY(-1px);
 }
 
 .btn-outline-blue:active {
@@ -247,139 +237,6 @@ body::before {
    各スクリーンの固有スタイル
 ============================================= */
 
-/* ログイン画面 */
-#screen-login {
-  background: radial-gradient(circle at center, rgba(13,34,71,0.5) 0%, var(--dark-navy) 100%);
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
-}
-
-.login-box {
-  width: 100%;
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  padding: 30px 24px;
-  box-shadow: var(--shadow-lg);
-  animation: cardFadeUp 0.5s var(--ease-smooth);
-}
-
-@keyframes cardFadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.login-title {
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--text);
-  text-align: center;
-  margin-bottom: 6px;
-  letter-spacing: 0.02em;
-}
-
-.login-sub {
-  font-size: 13px;
-  color: var(--text-muted);
-  text-align: center;
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
-
-.form-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--bright-cyan);
-  margin-bottom: 10px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.form-group {
-  margin-bottom: 22px;
-}
-
-.count-selector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  padding: 10px;
-}
-
-.cnt-btn {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: 1.5px solid var(--bright-cyan);
-  background: rgba(12, 192, 223, 0.1);
-  color: var(--bright-cyan);
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  transition: transform 0.2s, background 0.2s;
-}
-
-.cnt-btn:active {
-  transform: scale(0.9);
-  background: rgba(12, 192, 223, 0.25);
-}
-
-.cnt-val {
-  font-family: 'Roboto', sans-serif;
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--text);
-  min-width: 32px;
-  text-align: center;
-}
-
-.cnt-unit {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-left: -4px;
-}
-
-.passcode-input {
-  width: 100%;
-  border: 1.5px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: var(--radius-md);
-  padding: 14px;
-  font-size: 16px;
-  color: white;
-  outline: none;
-  letter-spacing: 0.12em;
-  text-align: center;
-  font-weight: 700;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.passcode-input:focus {
-  border-color: var(--bright-cyan);
-  box-shadow: 0 0 12px rgba(12, 192, 223, 0.25);
-}
-
-.passcode-input.error {
-  border-color: var(--accent-pink);
-  box-shadow: 0 0 12px rgba(224, 90, 115, 0.25);
-}
-
-.error-msg {
-  font-size: 12px;
-  color: var(--accent-pink);
-  margin-top: 6px;
-  display: none;
-  text-align: center;
-}
-
 /* チケット選択画面 */
 .ticket-check-item {
   display: flex;
@@ -387,11 +244,12 @@ body::before {
   gap: 14px;
   padding: 16px;
   border-bottom: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   transition: background 0.2s;
 }
 .ticket-check-item:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .green-check, .gray-check {
@@ -404,13 +262,13 @@ body::before {
 }
 
 .green-check {
-  background: var(--bright-cyan);
-  color: var(--dark-navy);
+  background: var(--deep-blue);
+  color: white;
 }
 
 .gray-check {
   border: 1.5px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.02);
+  background: white;
 }
 
 .ticket-item-name {
@@ -432,17 +290,17 @@ body::before {
   padding: 24px;
   gap: 8px;
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.7;
   transition: opacity 0.2s;
 }
 .scan-section:hover {
-  opacity: 0.9;
+  opacity: 1;
 }
 
 /* 施設選択画面 */
 .facility-section-label {
   font-size: 11px;
-  color: var(--bright-cyan);
+  color: var(--text-muted);
   padding: 14px 16px 6px;
   flex-shrink: 0;
   font-weight: 700;
@@ -456,19 +314,20 @@ body::before {
   gap: 14px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .facility-card:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .facility-thumb {
   width: 50px; height: 50px;
   border-radius: 50%;
   border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.04);
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -487,12 +346,12 @@ body::before {
 
 .time-select-tag {
   display: inline-block;
-  border: 1px solid var(--bright-cyan);
-  color: var(--bright-cyan);
+  border: 1px solid var(--deep-blue);
+  color: var(--deep-blue);
   border-radius: 4px;
   font-size: 11px;
   padding: 2px 8px;
-  background: rgba(12, 192, 223, 0.08);
+  background: rgba(58, 111, 160, 0.08);
 }
 
 /* 時間選択画面 */
@@ -503,14 +362,14 @@ body::before {
   padding: 20px 16px 16px;
   border-bottom: 1px solid var(--glass-border);
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .time-facility-thumb {
   width: 54px; height: 54px;
   border-radius: 50%;
   border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.04);
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -528,13 +387,14 @@ body::before {
 .time-slot {
   padding: 16px;
   border-bottom: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.2s;
 }
 
 .time-slot:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .time-slot-time {
@@ -554,7 +414,7 @@ body::before {
 .radio-outer {
   width: 20px; height: 20px;
   border-radius: 50%;
-  border: 2px solid var(--bright-cyan);
+  border: 2px solid var(--deep-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -564,17 +424,17 @@ body::before {
 .radio-inner {
   width: 10px; height: 10px;
   border-radius: 50%;
-  background: var(--bright-cyan);
+  background: var(--deep-blue);
   display: none;
 }
 
 .time-badge {
-  background: rgba(12, 192, 223, 0.08);
-  color: var(--bright-cyan);
+  background: rgba(58, 111, 160, 0.08);
+  color: var(--deep-blue);
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 3px;
-  border: 0.5px solid var(--bright-cyan);
+  border: 0.5px solid var(--deep-blue);
 }
 
 .time-accept {
@@ -604,7 +464,7 @@ body::before {
   width: 50px; height: 50px;
   border-radius: 50%;
   border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.04);
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -633,7 +493,7 @@ body::before {
 .confirm-block-label {
   font-size: 13px;
   font-weight: 700;
-  color: var(--bright-cyan);
+  color: var(--deep-blue);
   margin-bottom: 6px;
   letter-spacing: 0.02em;
 }
@@ -646,7 +506,7 @@ body::before {
 
 .confirm-val-sub {
   font-size: 11px;
-  color: var(--text-light);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -662,7 +522,7 @@ body::before {
   align-items: center;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .tkt-row:last-child {
@@ -671,13 +531,13 @@ body::before {
 
 .tkt-icon {
   width: 26px; height: 26px;
-  background: rgba(12, 192, 223, 0.1);
+  background: rgba(58, 111, 160, 0.08);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--bright-cyan);
+  color: var(--deep-blue);
   font-size: 14px;
 }
 
@@ -694,7 +554,7 @@ body::before {
 
 .entry-caution {
   font-size: 10px;
-  color: var(--text-light);
+  color: var(--text-muted);
   text-align: center;
   padding: 10px 16px 0;
   flex-shrink: 0;
@@ -711,13 +571,13 @@ body::before {
 }
 
 @keyframes mfloat {
-  from { transform: translateY(0) scale(1); opacity: 0.7; filter: drop-shadow(0 0 4px rgba(12, 192, 223, 0.1)); }
-  to { transform: translateY(-16px) scale(1.08); opacity: 1; filter: drop-shadow(0 4px 15px rgba(12, 192, 223, 0.5)); }
+  from { transform: translateY(0) scale(1); opacity: 0.7; filter: drop-shadow(0 0 4px rgba(58, 111, 160, 0.1)); }
+  to { transform: translateY(-16px) scale(1.08); opacity: 1; filter: drop-shadow(0 4px 15px rgba(58, 111, 160, 0.3)); }
 }
 
 /* 結果表示画面 */
 #screen-result {
-  background: rgba(10, 22, 40, 0.85);
+  background: rgba(36, 52, 71, 0.3);
   backdrop-filter: blur(8px);
   justify-content: center;
   align-items: center;
@@ -753,7 +613,7 @@ body::before {
 .modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(10, 22, 40, 0.8);
+  background: rgba(36, 52, 71, 0.4);
   backdrop-filter: blur(8px);
   display: none;
   align-items: center;
@@ -779,7 +639,7 @@ body::before {
 .modal-title {
   font-size: 15px;
   font-weight: 900;
-  color: var(--bright-cyan);
+  color: var(--deep-blue);
   text-align: center;
   margin-bottom: 16px;
   letter-spacing: 0.04em;
@@ -812,7 +672,7 @@ body::before {
   backdrop-filter: blur(28px) saturate(200%);
   -webkit-backdrop-filter: blur(28px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.70);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 10px 6px;
   box-shadow: var(--shadow-nav);
   min-height: 68px;
@@ -824,12 +684,12 @@ body::before {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  color: #6B7C93;
+  color: var(--text-muted);
   font-size: 11px;
   font-weight: 500;
   min-width: 56px;
   min-height: 48px;
-  border-radius: 24px;
+  border-radius: var(--radius-md);
   padding: 6px 8px;
   transition: color 0.2s, background 0.2s, transform 0.18s var(--ease-bounce);
   position: relative;
@@ -849,7 +709,7 @@ body::before {
 .nav-item:hover .nav-icon { transform: scale(1.15); }
 
 .nav-item.active {
-  color: #3A6FA0;
+  color: var(--deep-blue);
   font-weight: 700;
 }
 
@@ -860,8 +720,8 @@ body::before {
   left: 50%;
   transform: translateX(-50%);
   width: 28px; height: 3px;
-  background: linear-gradient(90deg, #5B90C2, #74A9D8);
-  border-radius: 999px;
+  background: linear-gradient(90deg, var(--mid-blue), var(--blue));
+  border-radius: var(--radius-full);
   animation: navIndicator 0.3s var(--ease-bounce);
 }
 @keyframes navIndicator {
@@ -878,53 +738,10 @@ body::before {
 
 <div class="app" id="app">
 
-  <!-- SCREEN 0: パスコード・人数入力画面 -->
-  <div class="screen active" id="screen-login">
-    <div class="login-box">
-      <div style="display:flex;justify-content:center;margin-bottom:20px;">
-        <svg width="52" height="48" viewBox="0 0 52 48" fill="none" style="filter: drop-shadow(0 0 10px rgba(12,192,223,0.5));">
-          <circle cx="11" cy="11" r="11" fill="#0cc0df"/>
-          <circle cx="41" cy="11" r="11" fill="#0cc0df"/>
-          <circle cx="26" cy="30" r="18" fill="#0cc0df"/>
-        </svg>
-      </div>
-      <h1 class="login-title">エントリー受付</h1>
-      <p class="login-sub">人数を選択して<br>パスコードを入力してください</p>
-      
-      <div class="form-group">
-        <h2 class="form-label">大人の人数</h2>
-        <div class="count-selector">
-          <button class="cnt-btn" onclick="changeCount('adult',-1)">－</button>
-          <div class="cnt-val" id="adult-count">1</div>
-          <button class="cnt-btn" onclick="changeCount('adult',1)">＋</button>
-          <span class="cnt-unit">名</span>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <h2 class="form-label">小人の人数</h2>
-        <div class="count-selector">
-          <button class="cnt-btn" onclick="changeCount('child',-1)">－</button>
-          <div class="cnt-val" id="child-count">0</div>
-          <button class="cnt-btn" onclick="changeCount('child',1)">＋</button>
-          <span class="cnt-unit">名</span>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <h2 class="form-label">パスコード (WWCM2026)</h2>
-        <input class="passcode-input" id="passcode-input" type="text" placeholder="パスコードを入力" autocomplete="off" oninput="onPasscodeInput()" />
-        <div class="error-msg" id="passcode-error">パスコードが正しくありません</div>
-      </div>
-      
-      <button class="btn-blue" onclick="tryLogin()">次へ</button>
-    </div>
-  </div>
-
-  <!-- SCREEN 1: パークチケット選択 -->
-  <div class="screen" id="screen-ticket">
+  <!-- SCREEN 1: パークチケット選択 (パスコード画面は廃止、ここからスタート) -->
+  <div class="screen active" id="screen-ticket">
     <div class="nav">
-      <button class="nav-close" onclick="goTo('screen-login')" aria-label="閉じる">✕</button>
+      <button class="nav-close" onclick="location.href='index.html'" aria-label="閉じる">✕</button>
       <div class="nav-title">チケット選択</div>
       <div class="nav-right" onclick="deselectAll()">選択解除</div>
     </div>
@@ -936,18 +753,18 @@ body::before {
     
     <div id="ticket-list" style="flex:1;overflow-y:auto; padding-top: 10px;"></div>
     
-    <div class="scan-section">
+    <div class="scan-section" onclick="location.href='ticket.get.html'">
       <svg width="36" height="36" viewBox="0 0 44 44" fill="none">
-        <rect x="2" y="2" width="12" height="12" rx="1.5" stroke="#0cc0df" stroke-width="2.5" fill="none"/>
-        <rect x="30" y="2" width="12" height="12" rx="1.5" stroke="#0cc0df" stroke-width="2.5" fill="none"/>
-        <rect x="2" y="30" width="12" height="12" rx="1.5" stroke="#0cc0df" stroke-width="2.5" fill="none"/>
-        <rect x="5" y="5" width="6" height="6" fill="#0cc0df"/>
-        <rect x="33" y="5" width="6" height="6" fill="#0cc0df"/>
-        <rect x="5" y="33" width="6" height="6" fill="#0cc0df"/>
-        <line x1="22" y1="2" x2="22" y2="42" stroke="#0cc0df" stroke-width="1.5"/>
-        <line x1="2" y1="22" x2="42" y2="22" stroke="#0cc0df" stroke-width="1.5"/>
+        <rect x="2" y="2" width="12" height="12" rx="1.5" stroke="var(--deep-blue)" stroke-width="2.5" fill="none"/>
+        <rect x="30" y="2" width="12" height="12" rx="1.5" stroke="var(--deep-blue)" stroke-width="2.5" fill="none"/>
+        <rect x="2" y="30" width="12" height="12" rx="1.5" stroke="var(--deep-blue)" stroke-width="2.5" fill="none"/>
+        <rect x="5" y="5" width="6" height="6" fill="var(--deep-blue)"/>
+        <rect x="33" y="5" width="6" height="6" fill="var(--deep-blue)"/>
+        <rect x="5" y="33" width="6" height="6" fill="var(--deep-blue)"/>
+        <line x1="22" y1="2" x2="22" y2="42" stroke="var(--deep-blue)" stroke-width="1.5"/>
+        <line x1="2" y1="22" x2="42" y2="22" stroke="var(--deep-blue)" stroke-width="1.5"/>
       </svg>
-      <div style="font-size:12px;color:var(--bright-cyan);font-weight:700;">QRスキャン</div>
+      <div style="font-size:12px;color:var(--deep-blue);font-weight:700;">新規チケット取得</div>
     </div>
     
     <div class="bottom-btn">
@@ -1035,15 +852,15 @@ body::before {
     <div style="flex:1;display:flex;align-items:center;justify-content:center;">
       <div class="mickey-float">
         <svg width="60" height="56" viewBox="0 0 52 48" fill="none">
-          <circle cx="11" cy="11" r="11" fill="#0cc0df"/>
-          <circle cx="41" cy="11" r="11" fill="#0cc0df"/>
-          <circle cx="26" cy="30" r="18" fill="#0cc0df"/>
+          <circle cx="11" cy="11" r="11" fill="var(--deep-blue)"/>
+          <circle cx="41" cy="11" r="11" fill="var(--deep-blue)"/>
+          <circle cx="26" cy="30" r="18" fill="var(--deep-blue)"/>
         </svg>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN 6: 結果 -->
+  <!-- SCREEN 6: 結果 (全落ちシミュレータ) -->
   <div class="screen" id="screen-result">
     <div class="result-box">
       <div style="font-size: 40px; margin-bottom: 14px;">😢</div>
@@ -1124,13 +941,12 @@ const ALL_TIME_SLOTS = [
 ];
 
 // ===== 状態 =====
-let adultCount = 1;
-let childCount = 0;
+const TICKETS_KEY = 'wwcm_tickets';
+let ticketStates = [];
 let selFacility = '';
 let selEmoji = '';
 let selTime = '';
 let selAccept = '';
-let ticketStates = [];
 let currentFacilities = [];
 let currentTimeSlots = [];
 
@@ -1154,54 +970,56 @@ function goTo(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ===== 初期画面 =====
-window.changeCount = function(type, delta) {
-  if (type === 'adult') {
-    adultCount = Math.max(0, adultCount + delta);
-    document.getElementById('adult-count').textContent = adultCount;
-  } else {
-    childCount = Math.max(0, childCount + delta);
-    document.getElementById('child-count').textContent = childCount;
-  }
-};
-
-window.onPasscodeInput = function() {
-  document.getElementById('passcode-input').classList.remove('error');
-  document.getElementById('passcode-error').style.display = 'none';
-};
-
-window.tryLogin = function() {
-  const code = document.getElementById('passcode-input').value.trim();
-  if (code !== 'WWCM2026') {
-    document.getElementById('passcode-input').classList.add('error');
-    document.getElementById('passcode-error').style.display = 'block';
-    return;
-  }
-  if (adultCount + childCount === 0) {
-    alert('人数を1名以上選択してください。');
-    return;
-  }
-  buildTicketList();
-  goTo('screen-ticket');
-};
-
-// ===== チケット =====
+// ===== チケット読み込み =====
 function buildTicketList() {
-  ticketStates = [];
-  for (let i = 0; i < adultCount; i++) ticketStates.push({type:'adult', checked:false});
-  for (let i = 0; i < childCount; i++) ticketStates.push({type:'child', checked:false});
-  
+  let tickets = [];
+  try {
+    tickets = JSON.parse(localStorage.getItem(TICKETS_KEY) || '[]');
+  } catch(e) {}
+
   const list = document.getElementById('ticket-list');
   list.innerHTML = '';
+
+  if (tickets.length === 0) {
+    // 空の場合のプレースホルダー
+    list.innerHTML = `
+      <div class="empty-state" style="margin: 32px 16px; padding: 32px 16px; text-align: center;">
+        <span class="empty-icon" style="font-size: 48px; display: block; margin-bottom: 16px;">🎟️</span>
+        <div class="empty-text" style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">チケットがありません</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;">
+          エントリー受付をするには、チケットを取得している必要があります。
+        </div>
+        <button class="btn-blue" onclick="location.href='ticket.get.html'" style="margin-bottom: 12px;">チケットを取得する</button>
+        <button class="btn-outline-blue" onclick="createDemoTickets()">テスト用チケットを作成</button>
+      </div>
+    `;
+    ticketStates = [];
+    updateTicketBtn();
+    return;
+  }
+
+  // 取得したチケットを表示
+  ticketStates = tickets.map(t => ({
+    id: t.id,
+    type: t.type,
+    nickname: t.nickname || 'ゲスト',
+    checked: true // 初期状態はチェック済み
+  }));
+
   ticketStates.forEach((t, idx) => {
-    const label = t.type === 'adult' ? '大人・１デーパスポート' : '小人・１デーパスポート';
+    const typeMap = { adult: '大人', middle: '中人', child: '小人' };
+    const label = `${typeMap[t.type] || '大人'}・１デーパスポート`;
     const div = document.createElement('div');
     div.className = 'ticket-check-item';
     div.setAttribute('data-idx', idx);
     div.innerHTML = `
-      <div class="gray-check" id="tck-box-${idx}" data-checked="0"></div>
+      <div class="green-check" id="tck-box-${idx}" data-checked="1">
+        <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
+          <polyline points="3,9 7,13 15,5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <div>
-        <div class="ticket-item-name">ホルダー: 名無しのゲスト</div>
+        <div class="ticket-item-name">ホルダー: ${t.nickname || '名無しのゲスト'}</div>
         <div class="ticket-item-desc">${label}</div>
       </div>
     `;
@@ -1210,6 +1028,16 @@ function buildTicketList() {
   });
   updateTicketBtn();
 }
+
+// デモ用チケットの作成
+window.createDemoTickets = function() {
+  const demoTickets = [
+    { type: 'adult', id: 'W2MC-ADULT-5201', nickname: '魔法のゲストA', issuedAt: new Date().toLocaleDateString() },
+    { type: 'child', id: 'W2MC-CHILD-3940', nickname: '魔法のゲストB', issuedAt: new Date().toLocaleDateString() }
+  ];
+  localStorage.setItem(TICKETS_KEY, JSON.stringify(demoTickets));
+  buildTicketList();
+};
 
 function toggleTicket(item) {
   const idx = parseInt(item.getAttribute('data-idx'));
@@ -1222,7 +1050,7 @@ function toggleTicket(item) {
   } else {
     box.dataset.checked = '1';
     box.className = 'green-check';
-    box.innerHTML = '<svg width="14" height="14" viewBox="0 0 18 18" fill="none"><polyline points="3,9 7,13 15,5" stroke="#0a1628" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    box.innerHTML = '<svg width="14" height="14" viewBox="0 0 18 18" fill="none"><polyline points="3,9 7,13 15,5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     ticketStates[idx].checked = true;
   }
   updateTicketBtn();
@@ -1345,7 +1173,7 @@ window.closeModalGoConfirm = function() {
   document.getElementById('modal-caution').classList.remove('open');
   document.getElementById('conf-thumb').textContent = selEmoji;
   document.getElementById('conf-name').textContent = selFacility;
-  document.getElementById('conf-time-val').innerHTML = `${selTime} <span style="background:rgba(12,192,223,0.1);color:var(--bright-cyan);font-size:11px;padding:2px 7px;border-radius:3px;border:0.5px solid var(--bright-cyan);">時間枠指定</span>`;
+  document.getElementById('conf-time-val').innerHTML = `${selTime} <span style="background:rgba(58,111,160,0.08);color:var(--deep-blue);font-size:11px;padding:2px 7px;border-radius:3px;border:0.5px solid var(--deep-blue);">時間枠指定</span>`;
   document.getElementById('conf-accept-val').textContent = selAccept;
   
   const selected = ticketStates.filter(t => t.checked);
@@ -1354,14 +1182,15 @@ window.closeModalGoConfirm = function() {
   const tktList = document.getElementById('conf-tickets-list');
   tktList.innerHTML = '';
   selected.forEach(t => {
-    const label = t.type === 'adult' ? '大人・１デーパスポート' : '小人・１デーパスポート';
+    const typeMap = { adult: '大人', middle: '中人', child: '小人' };
+    const label = `${typeMap[t.type] || '大人'}・１デーパスポート`;
     const row = document.createElement('div');
     row.className = 'tkt-row';
     row.innerHTML = `
       <div class="tkt-icon">🎟️</div>
       <div>
-        <div class="tkt-name">名無しのゲスト</div>
-        <div class="tkt-sub">${label}</div>
+        <div class="tkt-name">${t.nickname}</div>
+        <div class="tkt-sub">${label} (ID: ${t.id})</div>
       </div>
     `;
     tktList.appendChild(row);
@@ -1402,6 +1231,8 @@ function setActiveNav() {
   });
 }
 
+// 初期起動実行
+buildTicketList();
 setActiveNav();
 </script>
 </body>
