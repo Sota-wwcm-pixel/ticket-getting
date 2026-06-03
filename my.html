@@ -2,455 +2,685 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>マイページ - W2MC App</title>
+<meta name="description" content="W2MC App — マイページ。取得したチケットや予約したイベント、スタンプラリーの進捗などを確認できます。">
 
-<title>My Page</title>
+<!-- フォント -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 
 <style>
-:root{
-    --blue:#4E88BC;
-    --deep-blue:#356B9C;
-    --beige:#F6EEE4;
-    --card:rgba(255,255,255,.82);
-    --text:#314255;
-    --shadow:0 10px 28px rgba(60,80,100,.14);
-    --radius:30px;
+/* =============================================
+   デザイントークン
+============================================= */
+:root {
+  --blue:       #74A9D8;
+  --deep-blue:  #3A6FA0;
+  --mid-blue:   #5B90C2;
+  --sky:        #A9D2F3;
+  --light-sky:  #D6EDFB;
+  --beige:      #F6EEE4;
+  --cream:      #FFF9F2;
+  --warm-gold:  #E8C97A;
+  --text:         #243447;
+  --text-muted:   #6B7C93;
+  --text-light:   #94A8BC;
+
+  --glass-bg:     rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-shine:  rgba(255, 255, 255, 0.90);
+
+  --shadow-sm:  0 4px 16px rgba(58, 111, 160, 0.10);
+  --shadow-md:  0 8px 32px rgba(58, 111, 160, 0.14);
+  --shadow-lg:  0 16px 48px rgba(58, 111, 160, 0.20);
+  --shadow-nav: 0 -4px 24px rgba(58, 111, 160, 0.12), 0 8px 32px rgba(0, 0, 0, 0.14);
+
+  --radius-sm:  16px;
+  --radius-md:  24px;
+  --radius-lg:  32px;
+  --radius-full: 999px;
+
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+/* =============================================
+   リセット & ベース
+============================================= */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-html,body{
-    width:100%;
-    min-height:100%;
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(116, 169, 216, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 10%, rgba(232, 201, 122, 0.10) 0%, transparent 45%),
+    linear-gradient(170deg, #EBF5FF 0%, #F4EDE3 100%);
+  min-height: 100vh;
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
 }
 
-body{
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Hiragino Sans",
-        sans-serif;
-
-    color:var(--text);
-
-    background:
-        radial-gradient(
-            circle at top left,
-            rgba(255,255,255,.7),
-            transparent 34%
-        ),
-        linear-gradient(
-            180deg,
-            #edf7ff 0%,
-            #f7efe3 100%
-        );
-
-    padding-bottom:
-    calc(120px + env(safe-area-inset-bottom));
+/* =============================================
+   ヘッダー / ヒーロー
+============================================= */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.22) 0%, transparent 55%),
+    linear-gradient(155deg, #3A6FA0 0%, #5B90C2 48%, #82BAE0 100%);
+  padding:
+    calc(env(safe-area-inset-top) + 26px)
+    22px
+    80px;
 }
 
-/* Header */
-
-.hero{
-    position:relative;
-    overflow:hidden;
-
-    background:
-        linear-gradient(
-            180deg,
-            #4E88BC 0%,
-            #72B0DD 48%,
-            #BFDDF2 100%
-        );
-
-    padding:
-        calc(env(safe-area-inset-top) + 26px)
-        22px
-        90px;
+.hero-deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.logo{
-    width:170px;
+.hero-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite alternate;
+}
+.hero-circle-1 { width: 140px; height: 140px; top: -20px; right: -20px; }
+.hero-circle-2 { width: 80px; height: 80px; bottom: 10px; left: -20px; animation-delay: -2s; }
+
+@keyframes float {
+  from { transform: translateY(0) scale(1); }
+  to   { transform: translateY(-10px) scale(1.05); }
 }
 
-.page-title{
-    color:white;
-    margin-top:14px;
-    font-size:28px;
-    font-weight:700;
+.logo {
+  width: 150px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
 }
 
-.wave{
-    position:absolute;
-    left:0;
-    bottom:-1px;
-    width:100%;
-    height:90px;
+.page-title {
+  color: white;
+  margin-top: 14px;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
 }
 
-/* Content */
-
-.content{
-    margin-top:-44px;
-    padding:0 18px;
-    position:relative;
-    z-index:10;
+.wave {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 60px;
 }
 
-.card{
-    background:var(--card);
-    backdrop-filter:blur(16px);
-
-    border-radius:30px;
-    padding:22px;
-
-    margin-bottom:16px;
-    box-shadow:var(--shadow);
+/* =============================================
+   コンテンツ
+============================================= */
+.content {
+  margin-top: -36px;
+  padding: 0 16px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.card-title{
-    font-size:20px;
-    font-weight:700;
-    margin-bottom:16px;
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md), inset 0 1px 0 var(--glass-shine);
+  padding: 22px;
+  animation: cardFadeUp 0.5s var(--ease-smooth) both;
 }
 
-.ticket-number{
-    font-size:28px;
-    font-weight:800;
-    color:var(--deep-blue);
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.10s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.20s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.sub{
-    margin-top:6px;
-    color:#6d7b88;
+.card-title {
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    padding:12px 0;
-    border-bottom:1px solid rgba(0,0,0,.06);
+/* チケットセクション */
+.ticket-num-box {
+  background: linear-gradient(135deg, rgba(116, 169, 216, 0.12), rgba(58, 111, 160, 0.05));
+  border: 1.5px dashed var(--blue);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 12px;
 }
 
-.row:last-child{
-    border-bottom:none;
+.ticket-number {
+  font-family: 'Roboto', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--deep-blue);
+  letter-spacing: 0.04em;
 }
 
-.label{
-    color:#6d7b88;
+.ticket-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
-.value{
-    font-weight:700;
+/* 予約セクション */
+.reservation-item {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
 }
 
-.reservation{
-    background:white;
-    border-radius:24px;
-    padding:18px;
-    margin-bottom:12px;
+.reservation-item:last-child {
+  margin-bottom: 0;
 }
 
-.time{
-    font-size:14px;
-    color:#6d7b88;
+.reservation-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 5px;
+  background: var(--blue);
 }
 
-.event{
-    font-size:20px;
-    font-weight:700;
-    margin-top:6px;
+.res-time {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mid-blue);
 }
 
-.place{
-    color:#6d7b88;
-    margin-top:4px;
+.res-event {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
 }
 
-.stats{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
+.res-place {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.stat{
-    background:white;
-    border-radius:24px;
-    padding:20px 14px;
-    text-align:center;
+/* 登録情報行 */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.stat-num{
-    font-size:28px;
-    font-weight:800;
-    color:var(--deep-blue);
+.row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
-.stat-label{
-    font-size:13px;
-    margin-top:6px;
-    color:#6d7b88;
+.row:first-child {
+  padding-top: 0;
 }
 
-/* bottom nav */
-
-.bottom-nav{
-    position:fixed;
-
-    left:14px;
-    right:14px;
-
-    bottom:
-        calc(12px + env(safe-area-inset-bottom));
-
-    z-index:9999;
-
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    background:
-        rgba(255,255,255,.88);
-
-    backdrop-filter:blur(24px);
-    -webkit-backdrop-filter:blur(24px);
-
-    border-radius:999px;
-
-    padding:14px 10px;
-
-    box-shadow:
-        0 10px 35px rgba(0,0,0,.16);
-
-    min-height:74px;
+.label {
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
-.nav-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-
-    text-decoration:none;
-    color:#6d7b88;
-
-    font-size:12px;
-    min-width:58px;
+.value {
+  font-size: 14px;
+  font-weight: 700;
 }
 
-.nav-icon{
-    font-size:22px;
-    margin-bottom:4px;
+/* トグルスイッチ */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
 }
 
-.active{
-    color:var(--deep-blue);
-    font-weight:700;
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(0,0,0,0.1);
+  transition: .4s var(--ease-smooth);
+  border-radius: var(--radius-full);
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s var(--ease-bounce);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+input:checked + .slider {
+  background-color: var(--blue);
+}
+
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* アクティビティグリッド */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat-cell {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 16px 8px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s var(--ease-bounce);
+  text-decoration: none;
+  color: inherit;
+}
+
+.stat-cell:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-num {
+  font-family: 'Roboto', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--deep-blue);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* 空の状態 */
+.empty-placeholder {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.btn-secondary {
+  display: inline-block;
+  background: rgba(116, 169, 216, 0.12);
+  color: var(--deep-blue);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  margin-top: 10px;
+  transition: background 0.2s, transform 0.2s var(--ease-bounce);
+}
+.btn-secondary:hover {
+  background: rgba(116, 169, 216, 0.20);
+  transform: translateY(-1px);
+}
+
+/* =============================================
+   ボトムナビゲーション
+============================================= */
+.bottom-nav {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 9999;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.70);
+  border-radius: var(--radius-full);
+  padding: 10px 6px;
+  box-shadow: var(--shadow-nav);
+  min-height: 68px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 56px;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+  transition: color 0.2s, background 0.2s, transform 0.18s var(--ease-bounce);
+  position: relative;
+}
+
+.nav-item:hover {
+  background: rgba(116,169,216,0.08);
+  transform: translateY(-2px);
+}
+.nav-item:active { transform: scale(0.90); }
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 3px;
+  transition: transform 0.18s var(--ease-bounce);
+}
+.nav-item:hover .nav-icon { transform: scale(1.15); }
+
+.nav-item.active {
+  color: var(--deep-blue);
+  font-weight: 700;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 3px;
+  background: linear-gradient(90deg, var(--mid-blue), var(--blue));
+  border-radius: var(--radius-full);
+  animation: navIndicator 0.3s var(--ease-bounce);
+}
+@keyframes navIndicator {
+  from { width: 0; opacity: 0; }
+  to   { width: 28px; opacity: 1; }
+}
+
+::-webkit-scrollbar { display: none; }
+* { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 </head>
 
 <body>
 
-<header class="hero">
-
-    <img
-        src="Whatwecall.svg"
-        class="logo"
-    >
-
-    <div class="page-title">
-        My Page
+  <header class="hero">
+    <div class="hero-deco" aria-hidden="true">
+      <div class="hero-circle hero-circle-1"></div>
+      <div class="hero-circle hero-circle-2"></div>
     </div>
-
-    <svg
-        class="wave"
-        viewBox="0 0 1440 320"
-        preserveAspectRatio="none"
-    >
-        <path
-            fill="#F6EEE4"
-            d="M0,210
-            C180,190
-            360,185
-            540,198
-            C720,212
-            900,215
-            1080,200
-            C1260,185
-            1350,188
-            1440,195
-            L1440,320
-            L0,320
-            Z">
-        </path>
+    <img src="Whatwecall.svg" alt="What we call Magic!" class="logo" />
+    <h1 class="page-title">My Page</h1>
+    
+    <svg class="wave" viewBox="0 0 1440 110" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="#EBF5FF" d="M0,60 C240,90 480,30 720,55 C960,80 1200,20 1440,50 L1440,110 L0,110 Z" />
+      <path fill="#F4EDE3" opacity="0.55" d="M0,75 C200,95 440,50 720,68 C1000,86 1240,40 1440,62 L1440,110 L0,110 Z" />
     </svg>
+  </header>
 
-</header>
-
-<main class="content">
-
+  <main class="content">
+    
+    <!-- チケット -->
     <section class="card">
-
-        <div class="card-title">
-            チケット
-        </div>
-
-        <div class="ticket-number">
-            HG26-01382
-        </div>
-
-        <div class="sub">
-            入場人数：2名
-        </div>
-
+      <h2 class="card-title">🎟️ チケット情報</h2>
+      <div id="ticketContainer">
+        <!-- JSで動的レンダリング -->
+      </div>
     </section>
 
+    <!-- 次の予約 -->
     <section class="card">
-
-        <div class="card-title">
-            次の予約
-        </div>
-
-        <div class="reservation">
-            <div class="time">
-                13:00〜
-            </div>
-
-            <div class="event">
-                演劇部公演
-            </div>
-
-            <div class="place">
-                体育館
-            </div>
-        </div>
-
+      <h2 class="card-title">📅 次の予定</h2>
+      <div id="nextReservationContainer">
+        <!-- JSで動的レンダリング -->
+      </div>
     </section>
 
+    <!-- 予約一覧 -->
     <section class="card">
-
-        <div class="card-title">
-            予約一覧
-        </div>
-
-        <div class="reservation">
-            <div class="time">13:00〜</div>
-            <div class="event">演劇部公演</div>
-            <div class="place">体育館</div>
-        </div>
-
-        <div class="reservation">
-            <div class="time">14:20〜</div>
-            <div class="event">軽音ライブ</div>
-            <div class="place">講堂</div>
-        </div>
-
+      <h2 class="card-title">🎭 予約一覧</h2>
+      <div id="reservationsListContainer">
+        <!-- JSで動的レンダリング -->
+      </div>
     </section>
 
+    <!-- アクティビティ -->
     <section class="card">
-
-        <div class="card-title">
-            アクティビティ
+      <h2 class="card-title">✨ アクティビティ進捗</h2>
+      <div class="stats-grid">
+        <a href="stamp.html" class="stat-cell">
+          <div class="stat-num" id="statStamps">0</div>
+          <div class="stat-label">スタンプ</div>
+        </a>
+        <a href="saved.html" class="stat-cell">
+          <div class="stat-num" id="statSaved">0</div>
+          <div class="stat-label">お気に入り</div>
+        </a>
+        <div class="stat-cell">
+          <div class="stat-num" id="statReservations">0</div>
+          <div class="stat-label">イベント予約</div>
         </div>
-
-        <div class="stats">
-
-            <div class="stat">
-                <div class="stat-num">
-                    5
-                </div>
-                <div class="stat-label">
-                    スタンプ
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-num">
-                    8
-                </div>
-                <div class="stat-label">
-                    いいね
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-num">
-                    2
-                </div>
-                <div class="stat-label">
-                    予約
-                </div>
-            </div>
-
-        </div>
-
+      </div>
     </section>
 
+    <!-- 登録情報 -->
     <section class="card">
-
-        <div class="card-title">
-            登録情報
-        </div>
-
-        <div class="row">
-            <div class="label">
-                アカウント名
-            </div>
-
-            <div class="value">
-                Guest
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="label">
-                通知
-            </div>
-
-            <div class="value">
-                ON
-            </div>
-        </div>
-
+      <h2 class="card-title">👤 登録情報</h2>
+      <div class="row">
+        <div class="label">アカウント名</div>
+        <div class="value">Guest User</div>
+      </div>
+      <div class="row">
+        <div class="label">プッシュ通知</div>
+        <label class="switch">
+          <input type="checkbox" id="notificationToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row">
+        <div class="label">アプリバージョン</div>
+        <div class="value">v1.2.0 (Magic!)</div>
+      </div>
     </section>
 
-</main>
+  </main>
 
-<nav class="bottom-nav">
-
-    <a href="index.html" class="nav-item">
-        <span class="nav-icon">🏠</span>
-        Home
+  <!-- ボトムナビゲーション -->
+  <nav class="bottom-nav" aria-label="メインナビゲーション">
+    <a href="index.html" class="nav-item" data-page="index">
+      <span class="nav-icon" aria-hidden="true">🏠</span>
+      <span>Home</span>
     </a>
-
-    <a href="map.html" class="nav-item">
-        <span class="nav-icon">🗺️</span>
-        Map
+    <a href="map.html" class="nav-item" data-page="map">
+      <span class="nav-icon" aria-hidden="true">🗺️</span>
+      <span>Map</span>
     </a>
-
-    <a href="ticket.get.html" class="nav-item">
-        <span class="nav-icon">🎟️</span>
-        Ticket
+    <a href="ticket.get.html" class="nav-item" data-page="ticket">
+      <span class="nav-icon" aria-hidden="true">🎟️</span>
+      <span>Ticket</span>
     </a>
-
-    <a href="#" class="nav-item">
-        <span class="nav-icon">⭐</span>
-        Saved
+    <a href="saved.html" class="nav-item" data-page="saved">
+      <span class="nav-icon" aria-hidden="true">⭐</span>
+      <span>Saved</span>
     </a>
-
-    <a href="my.html" class="nav-item active">
-        <span class="nav-icon">👤</span>
-        My
+    <a href="my.html" class="nav-item" data-page="my">
+      <span class="nav-icon" aria-hidden="true">👤</span>
+      <span>My</span>
     </a>
+  </nav>
 
-</nav>
+  <script>
+    const TICKETS_KEY = 'wwcm_tickets';
+    const RESERVATIONS_KEY = 'wwcm_reservations';
+    const SAVED_KEY = 'wwcm_saved';
+    const STAMPS_KEY = 'wwcm_stamps';
 
+    // データの読み込みと反映
+    function initMyPageData() {
+      // 1. チケット
+      const ticketContainer = document.getElementById('ticketContainer');
+      let tickets = [];
+      try {
+        tickets = JSON.parse(localStorage.getItem(TICKETS_KEY) || '[]');
+      } catch(e) {}
+
+      if (tickets.length > 0) {
+        // 最初のチケットを表示
+        const primaryTicket = tickets[0];
+        const typeMap = { adult: '大人', middle: '中人', child: '小人' };
+        const label = typeMap[primaryTicket.type] || 'チケット';
+        ticketContainer.innerHTML = `
+          <div class="ticket-num-box">
+            <div class="ticket-number">${primaryTicket.id}</div>
+            <div class="ticket-sub">${label}・１デーパスポート (合計 ${tickets.length} 枚)</div>
+          </div>
+        `;
+      } else {
+        ticketContainer.innerHTML = `
+          <div class="empty-placeholder">
+            <div>取得済みのチケットはありません。</div>
+            <a href="ticket.get.html" class="btn-secondary">チケットを取得する</a>
+          </div>
+        `;
+      }
+
+      // 2. 予約情報
+      const nextContainer = document.getElementById('nextReservationContainer');
+      const listContainer = document.getElementById('reservationsListContainer');
+      let reservations = [];
+      try {
+        reservations = JSON.parse(localStorage.getItem(RESERVATIONS_KEY) || '[]');
+      } catch(e) {}
+
+      if (reservations.length > 0) {
+        // 次の予定 (一番最初の未実施予約と仮定)
+        const next = reservations[0];
+        nextContainer.innerHTML = `
+          <div class="reservation-item" onclick="location.href='events.reservation.html'">
+            <div class="res-time">📅 ${next.eventDate} ${next.eventTime} 〜</div>
+            <div class="res-event">${next.eventTitle}</div>
+            <div class="res-place">📍 予約番号: ${next.reservationId}</div>
+          </div>
+        `;
+
+        // 予約一覧の表示
+        let listHTML = '';
+        reservations.forEach(res => {
+          listHTML += `
+            <div class="reservation-item" onclick="location.href='events.reservation.html'">
+              <div class="res-time">${res.eventDate} ${res.eventTime}</div>
+              <div class="res-event">${res.eventTitle}</div>
+              <div class="res-place">チケット: ${res.ticketId}</div>
+            </div>
+          `;
+        });
+        listContainer.innerHTML = listHTML;
+      } else {
+        nextContainer.innerHTML = `
+          <div class="empty-placeholder">近い予定はありません。</div>
+        `;
+        listContainer.innerHTML = `
+          <div class="empty-placeholder">
+            <div>予約済みのイベントはありません。</div>
+            <a href="events.reservation.html" class="btn-secondary">イベントを予約する</a>
+          </div>
+        `;
+      }
+
+      // 3. アクティビティ進捗数
+      let stamps = [];
+      try { stamps = JSON.parse(localStorage.getItem(STAMPS_KEY) || '[]'); } catch(e) {}
+      document.getElementById('statStamps').textContent = stamps.length;
+
+      let saved = [];
+      try { saved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'); } catch(e) {}
+      document.getElementById('statSaved').textContent = saved.length;
+
+      document.getElementById('statReservations').textContent = reservations.length;
+    }
+
+    // ボトムナビのアクティブ状態の自動設定
+    function setActiveNav() {
+      const currentFile = location.pathname.split('/').pop() || 'index.html';
+      const navItems = document.querySelectorAll('.nav-item');
+
+      navItems.forEach(item => {
+        const itemFile = (item.getAttribute('href') || '').split('/').pop();
+        const isActive =
+          itemFile === currentFile ||
+          (currentFile === '' && itemFile === 'index.html');
+
+        if (isActive) {
+          item.classList.add('active');
+          item.setAttribute('aria-current', 'page');
+        } else {
+          item.classList.remove('active');
+          item.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    // プッシュ通知トグルの制御
+    document.getElementById('notificationToggle').addEventListener('change', (e) => {
+      const state = e.target.checked ? 'ON' : 'OFF';
+      console.log(`Notification toggled to ${state}`);
+    });
+
+    initMyPageData();
+    setActiveNav();
+  </script>
 </body>
 </html>
-``
