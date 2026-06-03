@@ -1526,13 +1526,60 @@ function editNickname(ticketId) {
         scale: 4,
         backgroundColor: null,
         useCORS: true,
+        allowTaint: true,
         width: el.offsetWidth,
         height: el.offsetHeight,
         scrollX: 0,
         scrollY: 0,
-       onclone: (doc) => {
-         // SVG handles the wave, no complex CSS hacking needed!
-       }
+        onclone: (doc, clonedEl) => {
+          // ① SVG のインラインHTMLを文字列置換でclipPath IDをユニーク化
+          //    （複数チケット表示時に同IDが競合してロゴが消える問題を解消）
+          const svgEls = clonedEl.querySelectorAll('svg.ticket-logo-svg');
+          svgEls.forEach((svg, si) => {
+            const prefix = 'tku' + ticketId.replace(/[^a-z0-9]/gi,'') + si;
+            let html = svg.outerHTML;
+            // SVG内のすべての id="..." を prefix付きに置換
+            const idMatches = [...html.matchAll(/\sid="([^"]+)"/g)];
+            const idList = [...new Set(idMatches.map(m => m[1]))];
+            idList.forEach(oldId => {
+              const newId = prefix + '_' + oldId;
+              // id="..." の置換
+              html = html.replace(new RegExp('id="' + oldId + '"', 'g'), 'id="' + newId + '"');
+              // url(#...) 参照の置換
+              html = html.replace(new RegExp('url\\(#' + oldId + '\\)', 'g'), 'url(#' + newId + ')');
+            });
+            const wrapper = doc.createElement('div');
+            wrapper.innerHTML = html;
+            const newSvg = wrapper.firstChild;
+            if (newSvg) svg.parentNode.replaceChild(newSvg, svg);
+          });
+
+          // ② ticket-header の overflow を visible にして波形SVGを確実に描画
+          const header = clonedEl.querySelector('.ticket-header');
+          if (header) {
+            header.style.overflow = 'visible';
+            header.style.paddingBottom = '22px';
+            const wave = header.querySelector('.ticket-header-wave');
+            if (wave) {
+              wave.style.position = 'absolute';
+              wave.style.bottom = '-1px';
+              wave.style.left = '0';
+              wave.style.width = '100%';
+              wave.style.height = '22px';
+              wave.style.display = 'block';
+            }
+          }
+
+          // ③ ticket-divider の repeating-linear-gradient を border に差し替え
+          //    （html2canvasがrepeating-linear-gradientを正しく描画しないため）
+          const dividers = clonedEl.querySelectorAll('.ticket-divider');
+          dividers.forEach(d => {
+            d.style.background = 'none';
+            d.style.borderTop = '1.5px dashed rgba(26,26,46,0.22)';
+            d.style.height = '0';
+            d.style.margin = '1rem 0';
+          });
+        }
       });
       const link = document.createElement('a');
       link.download = 'ticket-' + ticketId + '.png';
