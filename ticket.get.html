@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>公式webアプリ　W2MC App -What we call Magic!</title>
-<link rel="stylesheet" href="bottom-nav.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+JP:wght@400;500;700&family=DM+Mono:wght@400;500&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-512.png">
@@ -666,6 +665,40 @@
 
   .scanner-link a:hover { color: var(--bright-cyan); }
 
+  /* Footer */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(10,22,40,0.8);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(12,192,223,0.2);
+    z-index: 50;
+  }
+
+  .footer-logo {
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-logo img {
+    height: 100%;
+    width: auto;
+    filter: drop-shadow(0 2px 8px rgba(12,192,223,0.2));
+  }
+
+  .footer-text {
+    font-size: 0.65rem;
+    color: rgba(248,244,238,0.4);
+    margin-left: 1rem;
+    letter-spacing: 0.05em;
+  }
 
   .ticket-container {
   position: relative; position: relative; } /* チケット枠に相対位置を指定 */
@@ -682,6 +715,83 @@
 
 .admitted-overlay.visible {
   opacity: 1;
+}
+/* =========================
+   Bottom Navigation
+========================= */
+
+.bottom-nav {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 9999;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+
+  border: 1px solid rgba(255, 255, 255, 0.70);
+  border-radius: 999px;
+  padding: 10px 6px;
+  box-shadow: 0 -4px 24px rgba(58, 111, 160, 0.12), 0 8px 32px rgba(0, 0, 0, 0.14);
+
+  min-height: 68px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #6B7C93;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 56px;
+  min-height: 48px;
+  border-radius: 24px;
+  padding: 6px 8px;
+  transition: color 0.2s, background 0.2s, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.nav-item:hover {
+  background: rgba(116,169,216,0.08);
+  transform: translateY(-2px);
+}
+.nav-item:active { transform: scale(0.90); }
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 3px;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-item:hover .nav-icon { transform: scale(1.15); }
+
+.nav-item.active {
+  color: #3A6FA0;
+  font-weight: 700;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 3px;
+  background: linear-gradient(90deg, #5B90C2, #74A9D8);
+  border-radius: 999px;
+  animation: navIndicator 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes navIndicator {
+  from { width: 0; opacity: 0; }
+  to   { width: 28px; opacity: 1; }
 }
  /* visibleクラスがつくと表示 */
 </style>
@@ -1008,6 +1118,12 @@ opacity:0.9;
   </div>
 </div>
 
+<div class="footer">
+  <div class="footer-logo">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTkyMCIgem9vbUFuZFBhbj0ibWFnbmlmeSIgdmlld0JveD0iMCAwIDE0NDAgODA5Ljk5OTk5MyIgaGVpZ2h0PSIxMDgwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2ZXJzaW9uPSIxLjAiPjxkZWZzPjxnLz48Y2xpcFBhdGggaWQ9ImY4ZjJiN2RlZWYiPjxwYXRoIGQ9Ik0gMC43MTg3NSAwLjcxODc1IEwgMTE0NSAwLjcxODc1IEwgMTE0NSAzNTQuMjM4MjgxIEwgMC43MTg3NSAzNTQuMjM4MjgxIFogTSAwLjcxODc1IDAuNzE4NzUgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMjkwYjI0YTlmNCI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNDUiIHk9IjAiIGhlaWdodD0iMzU1Ii8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImJlYTk5MzVmYTUiPjxwYXRoIGQ9Ik0gMTE2MS44OTA2MjUgMTc3Ljc2MTcxOSBMIDEyNjAuMTQ4NDM4IDE3Ny43NjE3MTkgTCAxMjYwLjE0ODQzOCAyNzYuMDE5NTMxIEwgMTE2MS44OTA2MjUgMjc2LjAxOTUzMSBaIE0gMTE2MS44OTA2MjUgMTc3Ljc2MTcxOSAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSIzNjdhMWY1OWFhIj48cGF0aCBkPSJNIDEyMTEuMDE5NTMxIDE3Ny43NjE3MTkgTCAxMjI2LjY1MjM0NCAyMTEuMjU3ODEyIEwgMTI2MC4xNDg0MzggMjI2Ljg5MDYyNSBMIDEyMjYuNjUyMzQ0IDI0Mi41MjM0MzggTCAxMjExLjAxOTUzMSAyNzYuMDE5NTMxIEwgMTE5NS4zODY3MTkgMjQyLjUyMzQzOCBMIDExNjEuODkwNjI1IDIyNi44OTA2MjUgTCAxMTk1LjM4NjcxOSAyMTEuMjU3ODEyIFogTSAxMjExLjAxOTUzMSAxNzcuNzYxNzE5ICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjE3OGE5OTZmNTgiPjxwYXRoIGQ9Ik0gMC44OTA2MjUgMC43NjE3MTkgTCA5OS4xNDg0MzggMC43NjE3MTkgTCA5OS4xNDg0MzggOTkuMDE5NTMxIEwgMC44OTA2MjUgOTkuMDE5NTMxIFogTSAwLjg5MDYyNSAwLjc2MTcxOSAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSJkMzczNjg0MjUxIj48cGF0aCBkPSJNIDUwLjAxOTUzMSAwLjc2MTcxOSBMIDY1LjY1MjM0NCAzNC4yNTc4MTIgTCA5OS4xNDg0MzggNDkuODkwNjI1IEwgNjUuNjUyMzQ0IDY1LjUyMzQzOCBMIDUwLjAxOTUzMSA5OS4wMTk1MzEgTCAzNC4zODY3MTkgNjUuNTIzNDM4IEwgMC44OTA2MjUgNDkuODkwNjI1IEwgMzQuMzg2NzE5IDM0LjI1NzgxMiBaIE0gNTAuMDE5NTMxIDAuNzYxNzE5ICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImFhODMwOTYwN2MiPjxyZWN0IHg9IjAiIHdpZHRoPSIxMDAiIHk9IjAiIGhlaWdodD0iMTAwIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImIyMTJiMDM5ZGIiPjxwYXRoIGQ9Ik0gMTE5OS41NzAzMTIgNTYuNjA1NDY5IEwgMTMyMC43MjY1NjIgNTYuNjA1NDY5IEwgMTMyMC43MjY1NjIgMTc3Ljc2MTcxOSBMIDExOTkuNTcwMzEyIDE3Ny43NjE3MTkgWiBNIDExOTkuNTcwMzEyIDU2LjYwNTQ2OSAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI4ZTY3YTBkN2MzIj48cGF0aCBkPSJNIDEyNjAuMTQ4NDM4IDU2LjYwNTQ2OSBMIDEyNzkuNDIxODc1IDk3LjkxMDE1NiBMIDEzMjAuNzI2NTYyIDExNy4xODM1OTQgTCAxMjc5LjQyMTg3NSAxMzYuNDYwOTM4IEwgMTI2MC4xNDg0MzggMTc3Ljc2MTcxOSBMIDEyNDAuODcxMDk0IDEzNi40NjA5MzggTCAxMTk5LjU3MDMxMiAxMTcuMTgzNTk0IEwgMTI0MC44NzEwOTQgOTcuOTEwMTU2IFogTSAxMjYwLjE0ODQzOCA1Ni42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNDdkMDdlMjJhNyI+PHBhdGggZD0iTSAwLjU3MDMxMiAwLjYwNTQ2OSBMIDEyMS43MjY1NjIgMC42MDU0NjkgTCAxMjEuNzI2NTYyIDEyMS43NjE3MTkgTCAwLjU3MDMxMiAxMjEuNzYxNzE5IFogTSAwLjU3MDMxMiAwLjYwNTQ2OSAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI5NjU1MTg3YjMwIj48cGF0aCBkPSJNIDYxLjE0ODQzOCAwLjYwNTQ2OSBMIDgwLjQyMTg3NSA0MS45MTAxNTYgTCAxMjEuNzI2NTYyIDYxLjE4MzU5NCBMIDgwLjQyMTg3NSA4MC40NjA5MzggTCA2MS4xNDg0MzggMTIxLjc2MTcxOSBMIDQxLjg3MTA5NCA4MC40NjA5MzggTCAwLjU3MDMxMiA2MS4xODM1OTQgTCA0MS44NzEwOTQgNDEuOTEwMTU2IFogTSA2MS4xNDg0MzggMC42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNmQzNzJkYTRiNiI+PHJlY3QgeD0iMCIgd2lkdGg9IjEyMiIgeT0iMCIgaGVpZ2h0PSIxMjIiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNzIyNDMxOGYxMSI+PHJlY3QgeD0iMCIgd2lkdGg9IjEzMjEiIHk9IjAiIGhlaWdodD0iMzU1Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgNjYsIDI2NCkiPjxnIGNsaXAtcGF0aD0idXJsKCM3MjI0MzE4ZjExKSI+PGcgY2xpcC1wYXRoPSJ1cmwoI2Y4ZjJiN2RlZWYpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCAwLCAwLjAwMDAwMDAwMDAwMDA1Njg0MykiPjxnIGNsaXAtcGF0aD0idXJsKCMyOTBiMjRhOWY0KSI+PGcgZmlsbD0iIzAwNGFhZCIgZmlsbC1vcGFjaXR5PSIxIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjg3NjAwOSwgMjY1LjU1NTcxNykiPjxnPjxwYXRoIGQ9Ik0gMTA1LjUgNS4yOTY4NzUgTCAyLjEwOTM3NSAtMjUyLjI5Njg3NSBMIDU4LjkyMTg3NSAtMjUyLjI5Njg3NSBMIDEwOS43MzQzNzUgLTEyMy41IEwgMTU5LjE0MDYyNSAtMjQ5LjgyODEyNSBMIDE2MS42MDkzNzUgLTI0OS44MjgxMjUgTCAyMTEuMDE1NjI1IC0xMjMuNSBMIDI2MS44MjgxMjUgLTI1Mi4yOTY4NzUgTCAzMTguNjI1IC0yNTIuMjk2ODc1IEwgMjE1LjU5Mzc1IDQuMjM0Mzc1IEwgMjA2LjQyMTg3NSA0LjIzNDM3NSBMIDE2MC4yMDMxMjUgLTEwNy42MjUgTCAxMTQuMzI4MTI1IDUuMjk2ODc1IFogTSAxMDUuNSA1LjI5Njg3NSAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjMDA0YWFkIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMyMS45NzEyMDUsIDI2NS41NTU3MTcpIj48Zz48cGF0aCBkPSJNIDEwNS41IDUuMjk2ODc1IEwgMi4xMDkzNzUgLTI1Mi4yOTY4NzUgTCA1OC45MjE4NzUgLTI1Mi4yOTY4NzUgTCAxMDkuNzM0Mzc1IC0xMjMuNSBMIDE1OS4xNDA2MjUgLTI0OS44MjgxMjUgTCAxNjEuNjA5Mzc1IC0yNDkuODI4MTI1IEwgMjExLjAxNTYyNSAtMTIzLjUgTCAyNjEuODI4MTI1IC0yNTIuMjk2ODc1IEwgMzE4LjYyNSAtMjUyLjI5Njg3NSBMIDIxNS41OTM3NSA0LjIzNDM3NSBMIDIwNi40MjE4NzUgNC4yMzQzNzUgTCAxNjAuMjAzMTI1IC0xMDcuNjI1IEwgMTE0LjMyODEyNSA1LjI5Njg3NSBaIE0gMTA1LjUgNS4yOTY4NzUgIi8+PC9nPjwvZz48L2c+PGcgZmlsbD0iIzAwNGFhZCIgZmlsbC1vcGFjaXR5PSIxIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2NDMuMDY2NDAxLCAyNjUuNTU1NzE3KSI+PGc+PHBhdGggZD0iTSAxODguNzgxMjUgLTE5My43MTg3NSBDIDE4NC4wNzAzMTIgLTE5Ni4zMDA3ODEgMTc4LjM2MzI4MSAtMTk4Ljc2OTUzMSAxNzEuNjU2MjUgLTIwMS4xMjUgQyAxNjQuOTU3MDMxIC0yMDMuNDc2NTYyIDE1Ni4wODIwMzEgLTIwNC42NTYyNSAxNDUuMDMxMjUgLTIwNC42NTYyNSBDIDEzMC42NzU3ODEgLTIwNC42NTYyNSAxMTguNDQxNDA2IC0yMDEuODkwNjI1IDEwOC4zMjgxMjUgLTE5Ni4zNTkzNzUgQyA5OC4yMTA5MzggLTE5MC44MzU5MzggOTAuMDk3NjU2IC0xODMuNDg4MjgxIDgzLjk4NDM3NSAtMTc0LjMxMjUgQyA3Ny44NjcxODggLTE2NS4xMzI4MTIgNzMuNzUgLTE1NS4wNzgxMjUgNzEuNjI1IC0xNDQuMTQwNjI1IEMgNjkuNTA3ODEyIC0xMzMuMjAzMTI1IDY5LjUwNzgxMiAtMTIyLjI2NTYyNSA3MS42MjUgLTExMS4zMjgxMjUgQyA3My43NSAtMTAwLjM5MDYyNSA3Ny44NjcxODggLTkwLjMzMjAzMSA4My45ODQzNzUgLTgxLjE1NjI1IEMgOTAuMDk3NjU2IC03MS45NzY1NjIgOTguMjEwOTM4IC02NC42MjUgMTA4LjMyODEyNSAtNTkuMDkzNzUgQyAxMTguNDQxNDA2IC01My41NzAzMTIgMTMwLjY3NTc4MSAtNTAuODEyNSAxNDUuMDMxMjUgLTUwLjgxMjUgQyAxNTYuMDgyMDMxIC01MC44MTI1IDE2NS43ODEyNSAtNTIuMTAxNTYyIDE3NC4xMjUgLTU0LjY4NzUgQyAxODIuNDc2NTYyIC01Ny4yODEyNSAxODkuMDA3ODEyIC01OS43NTM5MDYgMTkzLjcxODc1IC02Mi4xMDkzNzUgTCAyMDAuNDIxODc1IC05Ljg3NSBDIDE5Mi42NjAxNTYgLTYuODIwMzEyIDE4My43MjI2NTYgLTQuMjk2ODc1IDE3My42MDkzNzUgLTIuMjk2ODc1IEMgMTYzLjQ5MjE4OCAtMC4yOTY4NzUgMTUzLjk2ODc1IDAuNzAzMTI1IDE0NS4wMzEyNSAwLjcwMzEyNSBDIDEyMy42MjUgMC43MDMxMjUgMTA0LjkyMTg3NSAtMi44Nzg5MDYgODguOTIxODc1IC0xMC4wNDY4NzUgQyA3Mi45MjE4NzUgLTE3LjIyMjY1NiA1OS41NjY0MDYgLTI2LjkyNTc4MSA0OC44NTkzNzUgLTM5LjE1NjI1IEMgMzguMTYwMTU2IC01MS4zOTQ1MzEgMzAuMTY0MDYyIC02NS4wOTc2NTYgMjQuODc1IC04MC4yNjU2MjUgQyAxOS41ODIwMzEgLTk1LjQ0MTQwNiAxNi45Mzc1IC0xMTEuMTQ0NTMxIDE2LjkzNzUgLTEyNy4zNzUgQyAxNi45Mzc1IC0xNDMuNjEzMjgxIDE5LjU4MjAzMSAtMTU5LjMxNjQwNiAyNC44NzUgLTE3NC40ODQzNzUgQyAzMC4xNjQwNjIgLTE4OS42NjAxNTYgMzguMTYwMTU2IC0yMDMuMzYzMjgxIDQ4Ljg1OTM3NSAtMjE1LjU5Mzc1IEMgNTkuNTY2NDA2IC0yMjcuODMyMDMxIDcyLjkyMTg3NSAtMjM3LjUzNTE1NiA4OC45MjE4NzUgLTI0NC43MDMxMjUgQyAxMDQuOTIxODc1IC0yNTEuODc4OTA2IDEyMy42MjUgLTI1NS40Njg3NSAxNDUuMDMxMjUgLTI1NS40Njg3NSBDIDE2My4zNzUgLTI1NS40Njg3NSAxNzkuOTU3MDMxIC0yNTIuMTc1NzgxIDE5NC43ODEyNSAtMjQ1LjU5Mzc1IFogTSAxODguNzgxMjUgLTE5My43MTg3NSAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjMDA0YWFkIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDg1NS40ODMyODgsIDI2NS41NTU3MTcpIj48Zz48cGF0aCBkPSJNIDE0My45Njg3NSAtMTQ1LjM3NSBMIDI0My40Njg3NSAtMjU2LjE3MTg3NSBMIDI1OS4zNDM3NSAtMjU2LjE3MTg3NSBMIDI1OS4zNDM3NSAwIEwgMjA4LjE4NzUgMCBMIDIwOC41NDY4NzUgLTE0MC43OTY4NzUgTCAxNDMuOTY4NzUgLTczLjA0Njg3NSBMIDc5LjM5MDYyNSAtMTQwLjc5Njg3NSBMIDc5LjM5MDYyNSAwIEwgMjguMjM0Mzc1IDAgTCAyOC4yMzQzNzUgLTI1Ni4xNzE4NzUgTCA0NC40NTMxMjUgLTI1Ni4xNzE4NzUgWiBNIDE0My45Njg3NSAtMTQ1LjM3NSAiLz48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48ZyBjbGlwLXBhdGg9InVybCgjYmVhOTkzNWZhNSkiPjxnIGNsaXAtcGF0aD0idXJsKCMzNjdhMWY1OWFhKSI+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgMTE2MSwgMTc3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoI2FhODMwOTYwN2MpIj48ZyBjbGlwLXBhdGg9InVybCgjMTc4YTk5NmY1OCkiPjxnIGNsaXAtcGF0aD0idXJsKCNkMzczNjg0MjUxKSI+PHBhdGggZmlsbD0iIzBjYzBkZiIgZD0iTSAwLjg5MDYyNSAwLjc2MTcxOSBMIDk5LjE0ODQzOCAwLjc2MTcxOSBMIDk5LjE0ODQzOCA5OS4wMTk1MzEgTCAwLjg5MDYyNSA5OS4wMTk1MzEgWiBNIDAuODkwNjI1IDAuNzYxNzE5ICIgZmlsbC1vcGFjaXR5PSIxIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48ZyBjbGlwLXBhdGg9InVybCgjYjIxMmIwMzlkYikiPjxnIGNsaXAtcGF0aD0idXJsKCM4ZTY3YTBkN2MzKSI+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgMTE5OSwgNTYpIj48ZyBjbGlwLXBhdGg9InVybCgjNmQzNzJkYTRiNikiPjxnIGNsaXAtcGF0aD0idXJsKCM0N2QwN2UyMmE3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzk2NTUxODdiMzApIj48cGF0aCBmaWxsPSIjMGNjMGRmIiBkPSJNIDAuNTcwMzEyIDAuNjA1NDY5IEwgMTIxLjcyNjU2MiAwLjYwNTQ2OSBMIDEyMS43MjY1NjIgMTIxLjc2MTcxOSBMIDAuNTcwMzEyIDEyMS43NjE3MTkgWiBNIDAuNTcwMzEyIDAuNjA1NDY5ICIgZmlsbC1vcGFjaXR5PSIxIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="WWCM">
+  </div>
+  <div class="footer-text">What we call Magic</div>
+</div>
 
 <script>
   const SCANNER_PASSWORD = '00';
@@ -1469,8 +1585,57 @@ async function saveTicketAsImage(ticketId) {
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
+
+// ボトムナビのアクティブ状態の自動設定
+function setActiveNav() {
+  const currentFile = location.pathname.split('/').pop() || 'index.html';
+  const navItems = document.querySelectorAll('.nav-item');
+
+  navItems.forEach(item => {
+    const itemFile = (item.getAttribute('href') || '').split('/').pop();
+    const isActive =
+      itemFile === currentFile ||
+      (currentFile === '' && itemFile === 'index.html');
+
+    if (isActive) {
+      item.classList.add('active');
+      item.setAttribute('aria-current', 'page');
+    } else {
+      item.classList.remove('active');
+      item.removeAttribute('aria-current');
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setActiveNav);
+} else {
+  setActiveNav();
+}
 </script>
 
-<script src="bottom-nav.js"></script>
+<nav class="bottom-nav" aria-label="メインナビゲーション">
+  <a href="index.html" class="nav-item" data-page="index">
+    <span class="nav-icon" aria-hidden="true">🏠</span>
+    <span>Home</span>
+  </a>
+  <a href="map.html" class="nav-item" data-page="map">
+    <span class="nav-icon" aria-hidden="true">🗺️</span>
+    <span>Map</span>
+  </a>
+  <a href="ticket.get.html" class="nav-item" data-page="ticket">
+    <span class="nav-icon" aria-hidden="true">🎟️</span>
+    <span>Ticket</span>
+  </a>
+  <a href="saved.html" class="nav-item" data-page="saved">
+    <span class="nav-icon" aria-hidden="true">⭐</span>
+    <span>Saved</span>
+  </a>
+  <a href="my.html" class="nav-item" data-page="my">
+    <span class="nav-icon" aria-hidden="true">👤</span>
+    <span>My</span>
+  </a>
+</nav>
+          
 </body>
 </html>
