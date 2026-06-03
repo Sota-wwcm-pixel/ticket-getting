@@ -79,10 +79,10 @@ body {
     radial-gradient(ellipse at 90% 10%, rgba(232, 201, 122, 0.10) 0%, transparent 45%),
     linear-gradient(170deg, #EBF5FF 0%, #F4EDE3 100%);
   min-height: 100vh;
-
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* overflow は JS で制御 */
+  overflow: hidden;
 }
+
 /* =============================================
    スプラッシュスクリーン
 ============================================= */
@@ -673,6 +673,246 @@ body {
 .animate-in:nth-child(8) { animation-delay: 0.40s; }
 
 /* =============================================
+   カルーセル
+============================================= */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.carousel-track-wrapper {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  width: 300%;
+  cursor: grab;
+}
+
+.carousel-slide {
+  width: 33.333%;
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.slide-content {
+  border-radius: calc(var(--radius-lg) - 4px);
+  padding: 24px 22px;
+  color: white;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.slide-content h3 {
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.slide-content p {
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0.9;
+  font-family: sans-serif;
+}
+
+.slide-btn {
+  align-self: flex-start;
+  margin-top: 12px;
+  background: white;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s var(--ease-bounce);
+}
+.slide-btn:hover {
+  transform: scale(1.05);
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.carousel-indicators .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-light);
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.3s, background-color 0.3s, transform 0.3s, width 0.3s;
+}
+
+.carousel-indicators .dot.active {
+  background: var(--deep-blue);
+  opacity: 1;
+  transform: scale(1.1);
+  width: 18px;
+  border-radius: 4px;
+}
+
+/* =============================================
+   オンボーディングモーダル
+============================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 22, 40, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease-smooth), visibility 0.4s var(--ease-smooth);
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 var(--glass-shine);
+  width: 100%;
+  max-width: 400px;
+  padding: 30px 24px;
+  transform: translateY(24px) scale(0.95);
+  transition: transform 0.4s var(--ease-bounce);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-overlay.show .modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.modal-logo {
+  display: block;
+  width: 150px;
+  margin: 0 auto 16px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--deep-blue);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(116, 169, 216, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--deep-blue);
+  background: white;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.checkbox-input {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--deep-blue);
+}
+
+.checkbox-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.modal-btn {
+  width: 100%;
+  border: none;
+  background: linear-gradient(135deg, var(--mid-blue) 0%, var(--deep-blue) 100%);
+  color: white;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(58, 111, 160, 0.25);
+}
+
+.modal-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(58, 111, 160, 0.35);
+}
+
+.modal-btn:active {
+  transform: scale(0.98);
+}
+
+/* =============================================
    スクロールバー非表示
 ============================================= */
 ::-webkit-scrollbar { display: none; }
@@ -777,10 +1017,47 @@ body {
       <div class="schedule-arrow" aria-hidden="true">›</div>
     </div>
 
+    <!-- Pickupセクション & カルーセル -->
+    <div class="section-header animate-in" style="margin-top: 16px;">
+      <h2 class="section-title">Pickup</h2>
+    </div>
+    
+    <div class="carousel-container animate-in">
+      <div class="carousel-track-wrapper">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-slide">
+            <div class="slide-content" style="background: linear-gradient(135deg, #74A9D8 0%, #3A6FA0 100%);">
+              <h3>W2MC Appへようこそ！</h3>
+              <p>本郷祭を120%楽しむための公式Webアプリです。マップや予約、スタンプラリーなど豊富なコンテンツを体験してください。</p>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <div class="slide-content" style="background: linear-gradient(135deg, #FFB3C8 0%, #FF5E8C 100%);">
+              <h3>スタンプラリー開催中！</h3>
+              <p>校内の各スポットに設置されたQRコードをカメラで読み取って、スタンプを集めよう！すべて集めると素敵な景品があるかも？</p>
+              <a href="stamp.html" class="slide-btn">参加する</a>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <div class="slide-content" style="background: linear-gradient(135deg, #8ED8D5 0%, #35A3A0 100%);">
+              <h3>全トゥル体験シミュレーター</h3>
+              <p>「全トゥル」（全ての体験をフルで満喫する）体験シミュレーターで、スリルあるアトラクションの雰囲気を擬似体験してみましょう。</p>
+              <a href="all.fall.html" class="slide-btn">体験する</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-indicators" id="carouselIndicators">
+        <span class="dot active" data-index="0"></span>
+        <span class="dot" data-index="1"></span>
+        <span class="dot" data-index="2"></span>
+      </div>
+    </div>
+
     <!-- Exploreセクション -->
     <div class="section-header animate-in">
       <h2 class="section-title">Explore</h2>
-      <a href="#" class="section-link" aria-label="すべてのコンテンツを見る">すべて見る</a>
+      <a href="events.reservation.html" class="section-link" aria-label="すべてのコンテンツを見る">すべて見る</a>
     </div>
 
     <nav class="grid" aria-label="コンテンツナビゲーション">
@@ -866,6 +1143,22 @@ body {
       <span class="notice-arrow" aria-hidden="true">›</span>
     </a>
 
+    <!-- 本郷祭公式案内へのリンク -->
+    <a
+      href="https://sites.google.com/view/whatwecallmagic/%E6%9C%AC%E9%83%B7%E7%A5%AD%E4%BC%81%E7%94%BB#h.vmybwq41e4w3"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="notice-card animate-in"
+      style="margin-top: 12px; background: linear-gradient(135deg, rgba(232,201,122,0.15) 0%, rgba(246,238,228,0.08) 100%); border-color: rgba(232,201,122,0.3); text-decoration: none; display: flex;"
+    >
+      <span class="notice-icon" aria-hidden="true">✨</span>
+      <div class="notice-text-wrap">
+        <div class="notice-title" style="color: var(--text);">本郷祭公式企画案内サイト</div>
+        <div class="notice-sub" style="color: var(--text-muted);"> What we call Magic! の公式詳細はこちら</div>
+      </div>
+      <span class="notice-arrow" aria-hidden="true">↗</span>
+    </a>
+
   </main>
 
   <!-- ボトムナビゲーション -->
@@ -897,6 +1190,36 @@ body {
     </a>
 
   </nav>
+</div>
+
+<!-- ========== Onboarding Modal ========== -->
+<div id="onboardingModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+  <div class="modal-content">
+    <img src="Whatwecall.svg" alt="W2MC Logo" class="modal-logo">
+    <h2 id="onboardingTitle" class="modal-title">W2MC App へようこそ！</h2>
+    <p class="modal-desc">本郷祭を120%楽しむための公式Webアプリです。まずはプロフィールを登録しましょう。</p>
+    
+    <form id="onboardingForm">
+      <div class="form-group">
+        <label for="userNameInput" class="form-label">ニックネーム</label>
+        <input type="text" id="userNameInput" class="form-input" placeholder="ゲスト" required autocomplete="name">
+      </div>
+      
+      <div class="form-group">
+        <label for="userEmailInput" class="form-label">メールアドレス</label>
+        <input type="email" id="userEmailInput" class="form-input" placeholder="yourname@example.com" required autocomplete="email">
+      </div>
+      
+      <div class="checkbox-group">
+        <input type="checkbox" id="pushConsentInput" class="checkbox-input" checked>
+        <label for="pushConsentInput" class="checkbox-label">
+          イベント開始30分前のプッシュ通知および重要なお知らせを受け取る
+        </label>
+      </div>
+      
+      <button type="submit" class="modal-btn">登録を完了してはじめる</button>
+    </form>
+  </div>
 </div>
 
 <!-- sr-only ユーティリティ -->
@@ -961,11 +1284,330 @@ body {
     });
   }
 
-  // DOM構築後すぐに実行
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setActiveNav);
-  } else {
+  /* ---------- カルーセル初期化 ---------- */
+  function initCarousel() {
+    const track = document.getElementById('carouselTrack');
+    const indicators = document.getElementById('carouselIndicators');
+    if (!track || !indicators) return;
+
+    const dots = Array.from(indicators.querySelectorAll('.dot'));
+    const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+    let currentIndex = 0;
+    let slideInterval = null;
+
+    function goToSlide(index) {
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
+      
+      currentIndex = index;
+      track.style.transform = `translateX(-${currentIndex * 33.333}%)`;
+      
+      dots.forEach(dot => dot.classList.remove('active'));
+      dots[currentIndex].classList.add('active');
+    }
+
+    function startAutoPlay() {
+      slideInterval = setInterval(() => {
+        goToSlide(currentIndex + 1);
+      }, 5000);
+    }
+
+    function stopAutoPlay() {
+      if (slideInterval) clearInterval(slideInterval);
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        stopAutoPlay();
+        const index = parseInt(e.target.getAttribute('data-index'), 10);
+        goToSlide(index);
+        startAutoPlay();
+      });
+    });
+
+    // Touch / Drag events
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+
+    track.addEventListener('touchstart', (e) => {
+      stopAutoPlay();
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    }, { passive: true });
+
+    track.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentX = e.touches[0].clientX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      const diffX = startX - currentX;
+      
+      if (Math.abs(diffX) > 50) {
+        if (diffX > 0) {
+          goToSlide(currentIndex + 1);
+        } else {
+          goToSlide(currentIndex - 1);
+        }
+      }
+      startAutoPlay();
+    });
+
+    track.addEventListener('mousedown', (e) => {
+      stopAutoPlay();
+      startX = e.clientX;
+      isDragging = true;
+      track.style.cursor = 'grabbing';
+    });
+
+    track.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      currentX = e.clientX;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      track.style.cursor = 'grab';
+      const diffX = startX - currentX;
+      
+      if (Math.abs(diffX) > 50) {
+        if (diffX > 0) {
+          goToSlide(currentIndex + 1);
+        } else {
+          goToSlide(currentIndex - 1);
+        }
+      }
+      startAutoPlay();
+    });
+
+    startAutoPlay();
+  }
+
+  /* ---------- 「Next Up」予約スケジュール表示 ---------- */
+  function updateNextUpCard() {
+    const reservationsKey = 'wwcm_reservations';
+    let reservations = [];
+    try {
+      reservations = JSON.parse(localStorage.getItem(reservationsKey) || '[]');
+    } catch (e) {
+      console.error(e);
+    }
+
+    const scheduleCard = document.querySelector('.schedule-card');
+    const scheduleTitle = document.querySelector('.schedule-title');
+    const scheduleSub = document.querySelector('.schedule-sub');
+
+    if (!scheduleCard) return;
+
+    const now = new Date();
+    
+    const futureReservations = reservations.filter(res => {
+      try {
+        const resDateTime = new Date(res.eventDate + ' ' + res.eventTime);
+        return resDateTime >= now;
+      } catch (e) {
+        return false;
+      }
+    });
+
+    if (futureReservations.length > 0) {
+      futureReservations.sort((a, b) => {
+        const dateA = new Date(a.eventDate + ' ' + a.eventTime);
+        const dateB = new Date(b.eventDate + ' ' + b.eventTime);
+        return dateA - dateB;
+      });
+
+      const nextRes = futureReservations[0];
+      
+      scheduleTitle.textContent = nextRes.eventTitle;
+      scheduleSub.textContent = `📅 ${nextRes.eventDate} ${nextRes.eventTime} (チケット: ${nextRes.ticketId})`;
+      scheduleCard.style.cursor = 'pointer';
+      scheduleCard.onclick = () => {
+        location.href = 'events.reservation.html?view=list';
+      };
+    } else {
+      scheduleTitle.textContent = '予定なし';
+      scheduleSub.textContent = '公演やイベントを予約してみよう！';
+      scheduleCard.style.cursor = 'pointer';
+      scheduleCard.onclick = () => {
+        location.href = 'events.reservation.html';
+      };
+    }
+  }
+
+  /* ---------- 30分前通知システム ---------- */
+  const notifiedKey = 'wwcm_notified_reservations';
+
+  function checkReservationsForNotification() {
+    let reservations = [];
+    try {
+      reservations = JSON.parse(localStorage.getItem('wwcm_reservations') || '[]');
+    } catch (e) {
+      return;
+    }
+
+    let notifiedIds = [];
+    try {
+      notifiedIds = JSON.parse(localStorage.getItem(notifiedKey) || '[]');
+    } catch (e) {}
+
+    const now = new Date();
+    const thirtyMinutes = 30 * 60 * 1000;
+
+    reservations.forEach(res => {
+      if (notifiedIds.includes(res.reservationId)) return;
+
+      try {
+        const resTime = new Date(res.eventDate + ' ' + res.eventTime);
+        const timeDiff = resTime - now;
+
+        if (timeDiff > 0 && timeDiff <= thirtyMinutes) {
+          triggerNotification(res);
+          notifiedIds.push(res.reservationId);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    localStorage.setItem(notifiedKey, JSON.stringify(notifiedIds));
+  }
+
+  function triggerNotification(res) {
+    const title = '【W2MC App】間もなくイベント開始です！';
+    const options = {
+      body: `「${res.eventTitle}」の開始30分前になりました。開始時間: ${res.eventTime}`,
+      icon: 'icon-192.png'
+    };
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, options);
+    }
+    showInAppBanner(res);
+  }
+
+  function showInAppBanner(res) {
+    const banner = document.createElement('div');
+    banner.style.cssText = `
+      position: fixed;
+      top: calc(env(safe-area-inset-top) + 16px);
+      left: 16px;
+      right: 16px;
+      background: linear-gradient(135deg, #3A6FA0 0%, #5B90C2 100%);
+      color: white;
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+      z-index: 100000;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: bannerSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      border: 1px solid rgba(255,255,255,0.2);
+    `;
+
+    banner.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; opacity:0.9;">Upcoming Event</span>
+        <button id="closeBannerBtn" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; padding:0 4px; line-height:1;">&times;</button>
+      </div>
+      <div style="font-weight:900; font-size:14px; margin-bottom: 2px;">⏰ 「${res.eventTitle}」開始30分前</div>
+      <div style="font-size:12px; opacity:0.9;">日時: ${res.eventDate} ${res.eventTime} (チケット: ${res.ticketId})</div>
+    `;
+
+    if (!document.getElementById('banner-animations')) {
+      const styles = document.createElement('style');
+      styles.id = 'banner-animations';
+      styles.innerHTML = `
+        @keyframes bannerSlideIn {
+          from { transform: translateY(-100px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes bannerSlideOut {
+          from { transform: translateY(0); opacity: 1; }
+          to { transform: translateY(-120px); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(styles);
+    }
+
+    document.body.appendChild(banner);
+
+    const closeBanner = () => {
+      banner.style.animation = 'bannerSlideOut 0.4s ease-in forwards';
+      banner.addEventListener('animationend', () => banner.remove());
+      setTimeout(() => banner.remove(), 450);
+    };
+
+    banner.querySelector('#closeBannerBtn').onclick = closeBanner;
+    setTimeout(closeBanner, 10000);
+  }
+
+  function startNotificationCheck() {
+    setInterval(checkReservationsForNotification, 30000);
+    checkReservationsForNotification();
+  }
+
+  /* ---------- オンボーディング制御 ---------- */
+  function initOnboarding() {
+    const onboardingModal = document.getElementById('onboardingModal');
+    const onboardingForm = document.getElementById('onboardingForm');
+    if (!onboardingModal || !onboardingForm) return;
+    
+    const userStr = localStorage.getItem('wwcm_user');
+    if (!userStr) {
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => {
+        onboardingModal.classList.add('show');
+      }, 2000);
+    } else {
+      startNotificationCheck();
+    }
+
+    onboardingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('userNameInput').value.trim();
+      const email = document.getElementById('userEmailInput').value.trim();
+      const pushEnabled = document.getElementById('pushConsentInput').checked;
+
+      const userData = {
+        name: name || 'Guest User',
+        email: email || '',
+        pushEnabled: pushEnabled,
+        primaryTicketId: null
+      };
+
+      localStorage.setItem('wwcm_user', JSON.stringify(userData));
+
+      if (pushEnabled && 'Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          console.log('Notification permission status:', permission);
+        });
+      }
+
+      onboardingModal.classList.remove('show');
+      document.body.style.overflow = '';
+      
+      updateNextUpCard();
+      startNotificationCheck();
+    });
+  }
+
+  function initAll() {
     setActiveNav();
+    initCarousel();
+    updateNextUpCard();
+    initOnboarding();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
   }
 
 })();
