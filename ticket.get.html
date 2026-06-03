@@ -1217,10 +1217,12 @@ window.addEventListener('load', () => {
           onmouseout="this.style.background='rgba(12,192,223,0.12)'">
           ⬇ このチケットを保存
         </button>
-      </div>`;
 
+      </div>`;
+  }
 
   function saveTickets() {
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
   }
 
