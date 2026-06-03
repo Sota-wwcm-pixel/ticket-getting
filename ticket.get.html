@@ -409,9 +409,13 @@ const TICKET_LOGO_SVG = `
 
   /* ヘッダー下部の波形SVGラッパー */
   .ticket-header-wave-wrap {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 22px;
     display: block;
     line-height: 0;
-    margin: 0.35rem -1.2rem 0;
   }
 
   .ticket-body {
@@ -748,10 +752,10 @@ const TICKET_LOGO_SVG = `
   /* 認証時（入場済み）に表示される右端の半円切り欠き効果（パンチ穴） */
   .ticket-admitted-cut {
     position: absolute;
-    right: -11px;
+    right: -18px;
     bottom: 113px; /* QRコードの右横の高さに合わせる */
-    width: 22px;
-    height: 22px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background-color: #0a1628; /* アプリ背景のダークネイビーと同じ色 */
     display: none;
@@ -1162,12 +1166,10 @@ window.addEventListener('load', () => {
               <span class="ticket-info-value">${ticket.issuedAt}</span>
             </div>
 
-            <!-- もぎり線（インラインSVG）QRコードと同y座標の端をもぎる -->
+            <!-- もぎり線（インラインSVG） -->
             <div class="ticket-tear">
               <svg viewBox="0 0 307 20" width="100%" height="20" style="display:block; overflow:visible;" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="-0.5" cy="10" r="11" fill="#0a1628"/>
-                <circle cx="307.5" cy="10" r="11" fill="#0a1628"/>
-                <line x1="15" y1="10" x2="292" y2="10" stroke="rgba(26,26,46,0.2)" stroke-width="1.5" stroke-dasharray="5,3"/>
+                <line x1="0" y1="10" x2="307" y2="10" stroke="rgba(26,26,46,0.2)" stroke-width="1.5" stroke-dasharray="5,3"/>
               </svg>
             </div>
 
