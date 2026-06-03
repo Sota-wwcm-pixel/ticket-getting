@@ -2,421 +2,589 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, viewport-fit=cover"
-/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>場内マップ - W2MC App</title>
+<meta name="description" content="W2MC App — 場内マップ。校内の展示・イベント場所を視覚的に探し、混雑状況や時間をチェックできます。">
 
-<title>場内マップ</title>
+<!-- フォント -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 
 <style>
-:root{
-    --blue:#4E88BC;
-    --beige:#F6EEE4;
-    --card:rgba(255,255,255,.86);
-    --text:#314255;
-    --shadow:0 12px 30px rgba(50,70,90,.18);
+/* =============================================
+   デザイントークン
+============================================= */
+:root {
+  --blue:       #74A9D8;
+  --deep-blue:  #3A6FA0;
+  --mid-blue:   #5B90C2;
+  --sky:        #A9D2F3;
+  --light-sky:  #D6EDFB;
+  --beige:      #F6EEE4;
+  --cream:      #FFF9F2;
+  --warm-gold:  #E8C97A;
+  --text:         #243447;
+  --text-muted:   #6B7C93;
+  --text-light:   #94A8BC;
+
+  --glass-bg:     rgba(255, 255, 255, 0.76);
+  --glass-border: rgba(255, 255, 255, 0.70);
+  --glass-shine:  rgba(255, 255, 255, 0.90);
+
+  --shadow-sm:  0 4px 16px rgba(58, 111, 160, 0.10);
+  --shadow-md:  0 8px 32px rgba(58, 111, 160, 0.14);
+  --shadow-lg:  0 16px 48px rgba(58, 111, 160, 0.20);
+  --shadow-nav: 0 -4px 24px rgba(58, 111, 160, 0.12), 0 8px 32px rgba(0, 0, 0, 0.14);
+
+  --radius-sm:  16px;
+  --radius-md:  24px;
+  --radius-lg:  32px;
+  --radius-full: 999px;
+
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+/* =============================================
+   リセット & ベース
+============================================= */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-body{
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Hiragino Sans",
-        sans-serif;
-
-    background:
-        linear-gradient(
-            180deg,
-            #dcecf9,
-            #f7efe5
-        );
-
-    color:var(--text);
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: linear-gradient(180deg, #dcecf9, #f7efe5);
+  color: var(--text);
 }
 
-/* Header */
-
-.header{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    z-index:50;
-
-    padding:
-        calc(env(safe-area-inset-top) + 18px)
-        20px
-        18px;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(78,136,188,.94),
-            rgba(78,136,188,.72)
-        );
-
-    backdrop-filter:blur(20px);
+/* =============================================
+   ヘッダー
+============================================= */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  padding:
+    calc(env(safe-area-inset-top) + 14px)
+    20px
+    14px;
+  background: rgba(78, 136, 188, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.title{
-    color:white;
-    font-size:22px;
-    font-weight:700;
+.title {
+  color: white;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
 }
 
-/* Map */
-
-.map-wrapper{
-    position:fixed;
-
-    top:0;
-    left:0;
-    right:0;
-
-    bottom:
-        calc(96px + env(safe-area-inset-bottom));
-
-    overflow:auto;
-
-    -webkit-overflow-scrolling:touch;
+/* =============================================
+   マップエリア
+============================================= */
+.map-wrapper {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  bottom: calc(68px + env(safe-area-inset-bottom) + 10px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.map-container{
-    position:relative;
-    width:1000px;
-    min-height:1300px;
-    padding-top:90px;
+.map-container {
+  position: relative;
+  width: 1000px;
+  min-height: 1300px;
+  padding-top: calc(env(safe-area-inset-top) + 70px);
+  background: radial-gradient(circle at center, transparent 30%, rgba(116, 169, 216, 0.08));
 }
 
-.map-image{
-    width:100%;
-    display:block;
+.map-image {
+  width: 100%;
+  display: block;
 }
 
-/* Pins */
-
-.pin{
-    position:absolute;
-
-    width:54px;
-    height:54px;
-
-    border:none;
-    border-radius:999px;
-
-    background:white;
-    box-shadow:var(--shadow);
-
-    font-size:24px;
-    cursor:pointer;
-
-    transform:translate(-50%,-50%);
+/* =============================================
+   マップピン
+============================================= */
+.pin {
+  position: absolute;
+  width: 50px; height: 50px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  box-shadow: var(--shadow-md), inset 0 2px 0 rgba(255,255,255,0.9);
+  font-size: 24px;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s;
+  z-index: 10;
 }
 
-.pin:active{
-    transform:
-        translate(-50%,-50%)
-        scale(.94);
+/* ピンの波紋エフェクト */
+.pin::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: rgba(116, 169, 216, 0.22);
+  z-index: -1;
+  animation: pulse 1.8s infinite;
 }
 
-/* Bottom Sheet */
-
-.sheet{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:-420px;
-
-    background:var(--card);
-
-    backdrop-filter:blur(20px);
-
-    border-radius:32px 32px 0 0;
-
-    padding:26px 24px 42px;
-
-    transition:.35s ease;
-    z-index:100;
-
-    box-shadow:
-        0 -12px 30px rgba(0,0,0,.12);
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
 }
 
-.sheet.show{
-    bottom:0;
+.pin:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
 }
 
-.sheet-handle{
-    width:48px;
-    height:5px;
-    border-radius:999px;
-    background:#d0d7df;
-    margin:0 auto 20px;
+.pin:active {
+  transform: translate(-50%, -50%) scale(0.94);
 }
 
-.sheet-title{
-    font-size:24px;
-    font-weight:700;
-    margin-bottom:12px;
+/* =============================================
+   ボトムシート（詳細モーダル）
+============================================= */
+.sheet {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: -440px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 -12px 40px rgba(58, 111, 160, 0.16);
+  padding: 16px 24px calc(24px + env(safe-area-inset-bottom));
+  transition: bottom 0.4s var(--ease-smooth);
+  z-index: 100;
 }
 
-.meta{
-    color:#6b7a89;
-    line-height:1.8;
+.sheet.show {
+  bottom: calc(68px + env(safe-area-inset-bottom) - 8px); /* ボトムナビの直上に配置 */
 }
 
-.buttons{
-    display:flex;
-    gap:12px;
-    margin-top:24px;
+.sheet-handle {
+  width: 44px; height: 5px;
+  border-radius: var(--radius-full);
+  background: rgba(36, 52, 71, 0.15);
+  margin: 0 auto 16px;
 }
 
-.btn{
-    flex:1;
-    border:none;
-    border-radius:20px;
-    padding:18px;
-
-    font-size:16px;
-    font-weight:700;
+.sheet-header-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.primary{
-    background:var(--blue);
-    color:white;
+.sheet-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.25;
 }
 
-.secondary{
-    background:#edf4fa;
-    color:var(--blue);
-}
-/* Bottom Nav */
-
-.bottom-nav{
-    position:fixed;
-
-    left:14px;
-    right:14px;
-
-    bottom:
-        calc(12px + env(safe-area-inset-bottom));
-
-    z-index:9999;
-
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    background:
-        rgba(255,255,255,.88);
-
-    backdrop-filter:blur(24px);
-    -webkit-backdrop-filter:blur(24px);
-
-    border-radius:999px;
-
-    padding:14px 10px;
-
-    box-shadow:
-        0 10px 35px rgba(0,0,0,.16);
-
-    min-height:74px;
+.sheet-emoji {
+  width: 46px; height: 46px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--sky) 0%, var(--blue) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(116, 169, 216, 0.25);
+  flex-shrink: 0;
 }
 
-.nav-item{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-
-    text-decoration:none;
-    color:#6d7b88;
-
-    font-size:12px;
-
-    min-width:58px;
-    min-height:52px;
+.meta {
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
-.nav-icon{
-    font-size:22px;
-    margin-bottom:4px;
+.buttons {
+  display: flex;
+  gap: 10px;
 }
 
-.active{
-    color:#356B9C;
-    font-weight:700;
+.btn {
+  flex: 1;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
+
+.primary {
+  background: linear-gradient(135deg, var(--mid-blue) 0%, var(--deep-blue) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(58, 111, 160, 0.2);
+}
+.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(58, 111, 160, 0.3);
+}
+
+.secondary {
+  background: white;
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.secondary:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.favorite-btn {
+  background: rgba(232, 201, 122, 0.12);
+  border: 1px solid rgba(232, 201, 122, 0.3);
+  color: #B5933C;
+}
+.favorite-btn:hover {
+  background: rgba(232, 201, 122, 0.2);
+  transform: translateY(-2px);
+}
+.favorite-btn.active {
+  background: linear-gradient(135deg, #FFF0C0 0%, var(--warm-gold) 100%);
+  border-color: rgba(232, 201, 122, 0.6);
+  color: var(--text);
+}
+
+.btn:active {
+  transform: scale(0.96) translateY(0);
+}
+
+/* トースト通知 */
+.toast {
+  position: fixed;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(36, 52, 71, 0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-lg);
+  z-index: 10000;
+  transition: top 0.4s var(--ease-bounce);
+  pointer-events: none;
+}
+.toast.show {
+  top: calc(env(safe-area-inset-top) + 20px);
+}
+
+/* =============================================
+   ボトムナビゲーション
+============================================= */
+.bottom-nav {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 9999;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.70);
+  border-radius: var(--radius-full);
+  padding: 10px 6px;
+  box-shadow: var(--shadow-nav);
+  min-height: 68px;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 56px;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+  transition: color 0.2s, background 0.2s, transform 0.18s var(--ease-bounce);
+  position: relative;
+}
+
+.nav-item:hover {
+  background: rgba(116,169,216,0.08);
+  transform: translateY(-2px);
+}
+.nav-item:active { transform: scale(0.90); }
+
+.nav-icon {
+  font-size: 20px;
+  margin-bottom: 3px;
+  transition: transform 0.18s var(--ease-bounce);
+}
+.nav-item:hover .nav-icon { transform: scale(1.15); }
+
+.nav-item.active {
+  color: var(--deep-blue);
+  font-weight: 700;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 3px;
+  background: linear-gradient(90deg, var(--mid-blue), var(--blue));
+  border-radius: var(--radius-full);
+  animation: navIndicator 0.3s var(--ease-bounce);
+}
+@keyframes navIndicator {
+  from { width: 0; opacity: 0; }
+  to   { width: 28px; opacity: 1; }
+}
+
+::-webkit-scrollbar { display: none; }
+* { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 </head>
 
 <body>
 
-<header class="header">
-    <div class="title">
-        場内マップ
-    </div>
-</header>
+  <header class="header">
+    <div class="title">場内マップ</div>
+  </header>
 
-<div class="map-wrapper">
+  <!-- トースト -->
+  <div id="toast" class="toast">お気に入りに追加しました</div>
 
+  <div class="map-wrapper">
     <div class="map-container">
+      <img src="map.png" class="map-image" alt="校内マップ" />
 
-        <img
-            src="map.png"
-            class="map-image"
-        >
+      <!-- 演劇 -->
+      <button
+        class="pin"
+        style="left:62%; top:33%;"
+        onclick="openSpot('演劇部公演', '体育館', '次回 13:00 / 待ち 5分', '🎭')"
+        aria-label="演劇部公演 (体育館)"
+      >
+        🎭
+      </button>
 
-        <!-- 演劇 -->
-        <button
-            class="pin"
-            style="left:62%; top:33%;"
-            onclick="openSpot(
-                '演劇部公演',
-                '体育館',
-                '次回 13:00 / 待ち 5分'
-            )"
-        >
-            🎭
-        </button>
+      <!-- 軽音 -->
+      <button
+        class="pin"
+        style="left:38%; top:58%;"
+        onclick="openSpot('軽音ライブ', '講堂', '次回 14:20 / 入場自由', '🎵')"
+        aria-label="軽音ライブ (講堂)"
+      >
+        🎵
+      </button>
 
-        <!-- 軽音 -->
-        <button
-            class="pin"
-            style="left:38%; top:58%;"
-            onclick="openSpot(
-                '軽音ライブ',
-                '講堂',
-                '次回 14:20'
-            )"
-        >
-            🎵
-        </button>
-
-        <!-- D研究会 -->
-        <button
-            class="pin"
-            style="left:73%; top:51%;"
-            onclick="openSpot(
-                'D研究会展示',
-                '3F展示室',
-                '高評価 ★4.9'
-            )"
-        >
-            ✨
-        </button>
-
+      <!-- D研究会 -->
+      <button
+        class="pin"
+        style="left:73%; top:51%;"
+        onclick="openSpot('D研究会展示', '3F展示室', '終日開催 / 高評価 ★4.9', '✨')"
+        aria-label="D研究会展示 (3F展示室)"
+      >
+        ✨
+      </button>
     </div>
+  </div>
 
-</div>
-
-<div id="sheet" class="sheet">
-
+  <!-- ボトムシート -->
+  <div id="sheet" class="sheet">
     <div class="sheet-handle"></div>
 
-    <div
-        id="sheetTitle"
-        class="sheet-title"
-    >
-        タイトル
+    <div class="sheet-header-wrap">
+      <div id="sheetTitle" class="sheet-title">タイトル</div>
+      <div id="sheetEmoji" class="sheet-emoji">📍</div>
     </div>
 
-    <div
-        id="sheetMeta"
-        class="meta"
-    ></div>
+    <div id="sheetMeta" class="meta"></div>
 
     <div class="buttons">
+      <!-- お気に入りボタン -->
+      <button id="favoriteBtn" class="btn favorite-btn" onclick="toggleFavorite()">
+        <span>⭐</span> お気に入り
+      </button>
 
-        <button class="btn secondary">
-            詳細
-        </button>
-
-        <button class="btn primary">
-            予約する
-        </button>
-
+      <!-- 予約するボタン -->
+      <button class="btn primary" onclick="location.href='events.reservation.html'">
+        <span>📅</span> 予約する
+      </button>
     </div>
+  </div>
 
-</div>
+  <!-- ボトムナビゲーション -->
+  <nav class="bottom-nav" aria-label="メインナビゲーション">
+    <a href="index.html" class="nav-item" data-page="index">
+      <span class="nav-icon" aria-hidden="true">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="map.html" class="nav-item" data-page="map">
+      <span class="nav-icon" aria-hidden="true">🗺️</span>
+      <span>Map</span>
+    </a>
+    <a href="ticket.get.html" class="nav-item" data-page="ticket">
+      <span class="nav-icon" aria-hidden="true">🎟️</span>
+      <span>Ticket</span>
+    </a>
+    <a href="saved.html" class="nav-item" data-page="saved">
+      <span class="nav-icon" aria-hidden="true">⭐</span>
+      <span>Saved</span>
+    </a>
+    <a href="my.html" class="nav-item" data-page="my">
+      <span class="nav-icon" aria-hidden="true">👤</span>
+      <span>My</span>
+    </a>
+  </nav>
 
-<script>
-const sheet =
-    document.getElementById("sheet");
+  <script>
+    const sheet = document.getElementById("sheet");
+    const SAVED_KEY = 'wwcm_saved';
+    
+    let currentSpot = null; // 現在展開中のスポットオブジェクト
 
-function openSpot(
-    title,
-    place,
-    info
-){
-    document.getElementById(
-        "sheetTitle"
-    ).textContent = title;
+    function openSpot(title, place, info, emoji) {
+      currentSpot = { name: title, place: place, emoji: emoji };
 
-    document.getElementById(
-        "sheetMeta"
-    ).innerHTML = `
+      document.getElementById("sheetTitle").textContent = title;
+      document.getElementById("sheetEmoji").textContent = emoji;
+      document.getElementById("sheetMeta").innerHTML = `
         場所：${place}<br>
-        ${info}
-    `;
+        情報：${info}
+      `;
 
-    sheet.classList.add("show");
-}
+      // お気に入り状態のチェック
+      updateFavoriteButtonState();
 
-document.addEventListener(
-    "click",
-    (e)=>{
-        if(
-            !e.target.closest(".sheet")
-            &&
-            !e.target.closest(".pin")
-        ){
-            sheet.classList.remove("show");
-        }
+      sheet.classList.add("show");
     }
-);
-</script>
-<nav class="bottom-nav">
 
-    <a href="index.html" class="nav-item">
-        <span class="nav-icon">🏠</span>
-        Home
-    </a>
+    // お気に入りボタンの文字・アクティブクラス更新
+    function updateFavoriteButtonState() {
+      const btn = document.getElementById('favoriteBtn');
+      if (!currentSpot) return;
 
-    <a href="map.html" class="nav-item active">
-        <span class="nav-icon">🗺️</span>
-        Map
-    </a>
+      let saved = [];
+      try {
+        saved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+      } catch (e) {}
 
-    <a href="ticket.get.html" class="nav-item">
-        <span class="nav-icon">🎟️</span>
-        Ticket
-    </a>
+      const isFavorited = saved.some(item => item.name === currentSpot.name);
+      
+      if (isFavorited) {
+        btn.classList.add('active');
+        btn.innerHTML = '<span>★</span> 保存済み';
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<span>☆</span> お気に入り';
+      }
+    }
 
-    <a href="#" class="nav-item">
-        <span class="nav-icon">⭐</span>
-        Saved
-    </a>
+    // お気に入り登録のトグル処理
+    window.toggleFavorite = function() {
+      if (!currentSpot) return;
 
-    <a href="my.html" class="nav-item">
-        <span class="nav-icon">👤</span>
-        My
-    </a>
+      let saved = [];
+      try {
+        saved = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]');
+      } catch (e) {}
 
-</nav>
+      const index = saved.findIndex(item => item.name === currentSpot.name);
+      const toast = document.getElementById('toast');
+
+      if (index > -1) {
+        // すでに保存されていたら削除
+        saved.splice(index, 1);
+        toast.textContent = 'お気に入りから削除しました';
+      } else {
+        // なければ追加
+        saved.push(currentSpot);
+        toast.textContent = 'お気に入りに追加しました！';
+      }
+
+      localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+      updateFavoriteButtonState();
+
+      // トースト通知を表示
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    };
+
+    // ボトムシートの外側をクリックしたら閉じる
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".sheet") && !e.target.closest(".pin")) {
+        sheet.classList.remove("show");
+      }
+    });
+
+    // ボトムナビのアクティブ状態の自動設定
+    function setActiveNav() {
+      const currentFile = location.pathname.split('/').pop() || 'index.html';
+      const navItems = document.querySelectorAll('.nav-item');
+
+      navItems.forEach(item => {
+        const itemFile = (item.getAttribute('href') || '').split('/').pop();
+        const isActive =
+          itemFile === currentFile ||
+          (currentFile === '' && itemFile === 'index.html');
+
+        if (isActive) {
+          item.classList.add('active');
+          item.setAttribute('aria-current', 'page');
+        } else {
+          item.classList.remove('active');
+          item.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    setActiveNav();
+  </script>
 </body>
 </html>
