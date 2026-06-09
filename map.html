@@ -708,6 +708,69 @@ body {
 
 ::-webkit-scrollbar { display: none; }
 * { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* =============================================
+   ヘッダー折りたたみスタイル
+   ============================================= */
+.header-toggle-btn {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16px);
+  right: 22px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s var(--ease-smooth);
+  z-index: 100;
+  font-size: 14px;
+  outline: none;
+}
+
+.header-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+}
+
+.header-toggle-btn:active {
+  transform: scale(0.9);
+}
+
+/* 折りたたみ時 */
+.hero.collapsed {
+  padding-top: calc(env(safe-area-inset-top) + 6px);
+  padding-bottom: 24px;
+}
+
+.hero.collapsed .logo,
+.hero.collapsed .hero-deco {
+  display: none;
+}
+
+.hero.collapsed .page-title {
+  font-size: 14px;
+  margin-top: 0;
+  text-align: left;
+  line-height: 1;
+}
+
+.hero.collapsed .header-toggle-btn {
+  top: calc(env(safe-area-inset-top) + 2px);
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+
+/* トランジションのためのアニメーション定義 */
+.hero {
+  transition: padding 0.3s var(--ease-smooth);
+}
 </style>
 </head>
 
@@ -718,6 +781,7 @@ body {
       <div class="hero-circle hero-circle-1"></div>
       <div class="hero-circle hero-circle-2"></div>
     </div>
+    <button class="header-toggle-btn" onclick="toggleHeader()" aria-label="ヘッダーを折りたたむ">▲</button>
     <img src="Whatwecall.svg" alt="What we call Magic!" class="logo" />
     <h1 class="page-title">Map</h1>
     
@@ -827,6 +891,24 @@ body {
     const sheet = document.getElementById("sheet");
     const SAVED_KEY = 'wwcm_saved';
 
+    // ヘッダー折りたたみ処理
+    window.toggleHeader = function() {
+      const hero = document.querySelector('.hero');
+      const btn = document.querySelector('.header-toggle-btn');
+      if (!hero || !btn) return;
+
+      const isCollapsed = hero.classList.toggle('collapsed');
+      if (isCollapsed) {
+        btn.textContent = '▼';
+        btn.setAttribute('aria-label', 'ヘッダーを広げる');
+        localStorage.setItem('map_header_collapsed', 'true');
+      } else {
+        btn.textContent = '▲';
+        btn.setAttribute('aria-label', 'ヘッダーを折りたたむ');
+        localStorage.removeItem('map_header_collapsed');
+      }
+    };
+
     // スポット一覧データ定義
     const spots = [
       { id: 'spot_1', name: '演劇部公演', place: '体育館', info: '次回 13:00 / 待ち 5分', emoji: '🎭', genre: 'talk', left: '62%', top: '33%' },
@@ -849,6 +931,17 @@ body {
       renderList();
       setZoom(1.0);
       setActiveNav();
+
+      // ヘッダーの折りたたみ状態の復元
+      if (localStorage.getItem('map_header_collapsed') === 'true') {
+        const hero = document.querySelector('.hero');
+        const btn = document.querySelector('.header-toggle-btn');
+        if (hero && btn) {
+          hero.classList.add('collapsed');
+          btn.textContent = '▼';
+          btn.setAttribute('aria-label', 'ヘッダーを広げる');
+        }
+      }
     }
 
     // 表示切り替え
