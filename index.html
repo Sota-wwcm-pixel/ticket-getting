@@ -913,6 +913,146 @@ body {
 }
 
 /* =============================================
+   チュートリアルモーダル
+============================================= */
+.tutorial-content {
+  max-width: 440px;
+  padding: 24px 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tutorial-slides-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.tutorial-slides {
+  display: flex;
+  width: 400%; /* 4 slides */
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.tutorial-slide {
+  width: 25%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px 15px 24px;
+  box-sizing: border-box;
+}
+
+.tutorial-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: tutorialFloat 3s ease-in-out infinite alternate;
+}
+
+.tutorial-slide-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.tutorial-slide-desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.tutorial-slide-desc strong {
+  color: var(--deep-blue);
+  font-weight: 700;
+}
+
+@keyframes tutorialFloat {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-6px); }
+}
+
+.tutorial-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(116, 169, 216, 0.15);
+}
+
+.tutorial-btn-text {
+  border: none;
+  background: transparent;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s, background 0.2s;
+}
+.tutorial-btn-text:hover {
+  color: var(--text-muted);
+  background: rgba(116,169,216,0.08);
+}
+
+.tutorial-indicators {
+  display: flex;
+  gap: 6px;
+}
+
+.t-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(116, 169, 216, 0.3);
+  transition: all 0.3s var(--ease-smooth);
+}
+.t-dot.active {
+  background: var(--deep-blue);
+  width: 18px;
+  border-radius: var(--radius-full);
+}
+
+.tutorial-nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.tutorial-btn-nav {
+  border: none;
+  background: linear-gradient(135deg, var(--mid-blue) 0%, var(--deep-blue) 100%);
+  color: white;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(58, 111, 160, 0.15);
+  transition: transform 0.2s var(--ease-bounce), box-shadow 0.2s;
+}
+.tutorial-btn-nav:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(58, 111, 160, 0.25);
+}
+.tutorial-btn-nav:active {
+  transform: scale(0.96);
+}
+
+/* =============================================
    スクロールバー非表示
 ============================================= */
 ::-webkit-scrollbar { display: none; }
@@ -1219,6 +1359,76 @@ body {
       
       <button type="submit" class="modal-btn">登録を完了してはじめる</button>
     </form>
+  </div>
+</div>
+
+<!-- ========== Tutorial Modal ========== -->
+<div id="tutorialModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+  <div class="modal-content tutorial-content">
+    
+    <div class="tutorial-slides-wrapper">
+      <div class="tutorial-slides" id="tutorialSlides">
+        
+        <!-- Slide 1: Welcome -->
+        <div class="tutorial-slide">
+          <div class="tutorial-badge" style="background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%);">🪄</div>
+          <h2 class="tutorial-slide-title">W2MC Appへようこそ！</h2>
+          <p class="tutorial-slide-desc">
+            本郷祭の公式Webアプリへようこそ！<br>
+            このアプリ一つで、展示や公演の予約からスタンプラリーまで、文化祭を120%楽しむことができます。
+          </p>
+        </div>
+        
+        <!-- Slide 2: Map -->
+        <div class="tutorial-slide">
+          <div class="tutorial-badge" style="background: linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%);">🗺️</div>
+          <h2 class="tutorial-slide-title">校内をスマートに探索</h2>
+          <p class="tutorial-slide-desc">
+            <strong>「場内マップ」</strong>では、展示の位置や待ち時間を一目で確認。<br>
+            見たい企画は「お気に入り（⭐）」に登録して、自分だけのスケジュールを作れます！
+          </p>
+        </div>
+        
+        <!-- Slide 3: Reservations & Tickets -->
+        <div class="tutorial-slide">
+          <div class="tutorial-badge" style="background: linear-gradient(135deg, #74a9d8 0%, #3a6fa0 100%);">🎟️</div>
+          <h2 class="tutorial-slide-title">事前予約 & チケット管理</h2>
+          <p class="tutorial-slide-desc">
+            待たずに楽しめる<strong>「イベント予約」</strong>！<br>
+            取得したチケットは「チケット」タブからいつでも提示でき、入場確認もラクラクです。
+          </p>
+        </div>
+        
+        <!-- Slide 4: Stamp Rally -->
+        <div class="tutorial-slide">
+          <div class="tutorial-badge" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);">📍</div>
+          <h2 class="tutorial-slide-title">スタンプを集めて特典GET</h2>
+          <p class="tutorial-slide-desc">
+            校内に隠されたQRコードを読み取ってスタンプを集めよう！<br>
+            すべてのスタンプを制覇すると、<strong>豪華景品</strong>と交換することができます。
+          </p>
+        </div>
+        
+      </div>
+    </div>
+    
+    <!-- Footer / Navigation -->
+    <div class="tutorial-footer">
+      <button id="tutorialSkipBtn" class="tutorial-btn-text">スキップ</button>
+      
+      <div class="tutorial-indicators" id="tutorialIndicators">
+        <span class="t-dot active"></span>
+        <span class="t-dot"></span>
+        <span class="t-dot"></span>
+        <span class="t-dot"></span>
+      </div>
+      
+      <div class="tutorial-nav-buttons">
+        <button id="tutorialBackBtn" class="tutorial-btn-nav" style="display: none;">戻る</button>
+        <button id="tutorialNextBtn" class="tutorial-btn-nav">次へ</button>
+      </div>
+    </div>
+    
   </div>
 </div>
 
@@ -1563,6 +1773,83 @@ body {
     checkReservationsForNotification();
   }
 
+  /* ---------- チュートリアル制御 ---------- */
+  let currentTutorialSlide = 0;
+  const totalTutorialSlides = 4;
+
+  function updateTutorialSlidePosition() {
+    const slides = document.getElementById('tutorialSlides');
+    const dots = document.querySelectorAll('.t-dot');
+    const backBtn = document.getElementById('tutorialBackBtn');
+    const nextBtn = document.getElementById('tutorialNextBtn');
+    
+    if (!slides || !backBtn || !nextBtn) return;
+    
+    slides.style.transform = `translateX(-${currentTutorialSlide * 25}%)`;
+    
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentTutorialSlide);
+    });
+    
+    backBtn.style.display = currentTutorialSlide === 0 ? 'none' : 'block';
+    
+    if (currentTutorialSlide === totalTutorialSlides - 1) {
+      nextBtn.textContent = 'アプリをはじめる';
+      nextBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+      nextBtn.style.boxShadow = '0 4px 10px rgba(16, 185, 129, 0.2)';
+    } else {
+      nextBtn.textContent = '次へ';
+      nextBtn.style.background = 'linear-gradient(135deg, var(--mid-blue) 0%, var(--deep-blue) 100%)';
+      nextBtn.style.boxShadow = '0 4px 10px rgba(58, 111, 160, 0.15)';
+    }
+  }
+
+  function nextTutorialSlide() {
+    if (currentTutorialSlide < totalTutorialSlides - 1) {
+      currentTutorialSlide++;
+      updateTutorialSlidePosition();
+    } else {
+      finishTutorial();
+    }
+  }
+
+  function prevTutorialSlide() {
+    if (currentTutorialSlide > 0) {
+      currentTutorialSlide--;
+      updateTutorialSlidePosition();
+    }
+  }
+
+  function finishTutorial() {
+    const tutorialModal = document.getElementById('tutorialModal');
+    if (tutorialModal) {
+      tutorialModal.classList.remove('show');
+      document.body.style.overflow = '';
+      localStorage.setItem('wwcm_tutorial_seen', 'true');
+    }
+  }
+
+  function openTutorialModal() {
+    const tutorialModal = document.getElementById('tutorialModal');
+    if (!tutorialModal) return;
+    
+    currentTutorialSlide = 0;
+    updateTutorialSlidePosition();
+    
+    document.body.style.overflow = 'hidden';
+    tutorialModal.classList.add('show');
+  }
+
+  function initTutorial() {
+    const skipBtn = document.getElementById('tutorialSkipBtn');
+    const backBtn = document.getElementById('tutorialBackBtn');
+    const nextBtn = document.getElementById('tutorialNextBtn');
+    
+    if (skipBtn) skipBtn.onclick = finishTutorial;
+    if (backBtn) backBtn.onclick = prevTutorialSlide;
+    if (nextBtn) nextBtn.onclick = nextTutorialSlide;
+  }
+
   /* ---------- オンボーディング制御 ---------- */
   function initOnboarding() {
     const onboardingModal = document.getElementById('onboardingModal');
@@ -1570,11 +1857,18 @@ body {
     if (!onboardingModal || !onboardingForm) return;
     
     const userStr = localStorage.getItem('wwcm_user');
+    const tutorialSeen = localStorage.getItem('wwcm_tutorial_seen');
+
     if (!userStr) {
       document.body.style.overflow = 'hidden';
       setTimeout(() => {
         onboardingModal.classList.add('show');
       }, 2000);
+    } else if (!tutorialSeen) {
+      setTimeout(() => {
+        openTutorialModal();
+      }, 1000);
+      startNotificationCheck();
     } else {
       startNotificationCheck();
     }
@@ -1601,7 +1895,9 @@ body {
       }
 
       onboardingModal.classList.remove('show');
-      document.body.style.overflow = '';
+      setTimeout(() => {
+        openTutorialModal();
+      }, 400);
       
       updateNextUpCard();
       startNotificationCheck();
@@ -1612,7 +1908,16 @@ body {
     setActiveNav();
     initCarousel();
     updateNextUpCard();
+    initTutorial();
     initOnboarding();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('showTutorial') === 'true') {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => {
+        openTutorialModal();
+      }, 500);
+    }
   }
 
   if (document.readyState === 'loading') {
