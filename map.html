@@ -154,6 +154,9 @@ body {
   padding: 8px 4px;
   background: transparent;
   flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+  pointer-events: none;
 }
 
 .view-toggle {
@@ -166,6 +169,7 @@ body {
   padding: 3px;
   align-self: center;
   box-shadow: var(--shadow-sm);
+  pointer-events: auto;
 }
 
 .toggle-btn {
@@ -193,6 +197,7 @@ body {
   padding: 4px 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  pointer-events: auto;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 
@@ -236,6 +241,17 @@ body {
   flex-direction: column;
 }
 
+#mapViewContainer {
+  position: absolute;
+  top: 0;
+  left: -12px;
+  right: -12px;
+  bottom: 0;
+  margin-bottom: 0;
+  border-radius: 0;
+  z-index: 5;
+}
+
 .map-wrapper {
   flex: 1;
   overflow: auto;
@@ -245,6 +261,13 @@ body {
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-sm);
   -webkit-overflow-scrolling: touch;
+}
+
+#mapViewContainer .map-wrapper {
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 .zoom-container {
@@ -268,7 +291,7 @@ body {
 /* ズームコントロール */
 .zoom-controls {
   position: absolute;
-  bottom: 20px;
+  bottom: calc(96px + env(safe-area-inset-bottom));
   right: 16px;
   z-index: 80;
   display: flex;
