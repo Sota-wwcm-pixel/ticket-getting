@@ -595,6 +595,10 @@ input:checked + .slider::before {
         <select id="primaryTicketSelect" class="profile-select"></select>
       </div>
       <div class="row">
+        <div class="label">使い方ガイド</div>
+        <button class="btn-secondary" style="margin-top: 0; padding: 6px 14px; font-size: 12px; cursor: pointer; border: none;" onclick="replayTutorial()">チュートリアルを見る</button>
+      </div>
+      <div class="row">
         <div class="label">アプリバージョン</div>
         <div class="value">v1.2.0 (Magic!)</div>
       </div>
@@ -817,6 +821,11 @@ input:checked + .slider::before {
       initMyPageData();
       initUserProfile();
     });
+
+    window.replayTutorial = function() {
+      localStorage.removeItem('wwcm_tutorial_seen');
+      location.href = 'index.html?showTutorial=true';
+    };
 
     initMyPageData();
     initUserProfile();
